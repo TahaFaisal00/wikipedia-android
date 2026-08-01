@@ -1,0 +1,13 @@
+*** Variables ***
+${SEARCH_BAR}     android=new UiSelector().resourceId("org.wikipedia.alpha:id/navigation_bar_item_content_container").instance(2)
+${FASTER_WAY_TO_SEARCH_WINDOW_CLOSE_BUTTON}         android=new UiSelector().className("android.widget.Button").instance(0)
+
+${SEARCH_PLACEHOLDER}         id=org.wikipedia.alpha:id/search_text_view
+${SEARCH_FIELD}             id=org.wikipedia.alpha:id/search_src_text
+${FIRST_RESULT_ARTICLE}     android=new UiSelector().className("android.view.View").instance(3)
+${HIST1H1B_ARTICLE_TITLE}            android=new UiSelector().text("HIST1H1B")
+
+${SEARCH_RESULT_ARTICLE_TITLE}          android=new UiSelector().text("{}")
+
+${HIST1H1B_ARTICLE_NAME}         HIST1H1B
+${HIST1_ARTICLE_PREFIX_NAME}         HIST1
