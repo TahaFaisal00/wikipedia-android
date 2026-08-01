@@ -22,11 +22,24 @@ Search Returns The Requested Article
     search_actions.Navigate To Search Page
     search_actions.Dismiss Faster Way To Search Tip
     search_actions.Search For Article       ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Verify Search List Shows Article        ${HIST1H1B_ARTICLE_NAME}
     search_actions.Open Searched Article        ${HIST1H1B_ARTICLE_NAME}
     article_actions.Dismiss Games Promo If Present
     article_actions.Verify Article Page Loaded    ${HIST1H1B_ARTICLE_TITLE}
     article_actions.Verify UI Paragraph Matches API Paragraph        ${HIST1H1B_ARTICLE_NAME}
     [Teardown]        Run Keyword And Ignore Error         app.Return To Native Context
+
+Search Results Match What The Server Returned
+    [Documentation]     Type a prefix, ask the API for its top result, and check that
+    ...                same result shows up in the search list on screen.
+    ...                UI acts, API observes.
+    [Tags]              search      oracle-api
+    [Setup]     app.Skip Tutorial
+    search_actions.Navigate To Search Page
+    search_actions.Dismiss Faster Way To Search Tip
+    search_actions.Search For Article                   ${HIST1_ARTICLE_PREFIX_NAME}
+    ${api_first_result}=    search_actions.Get Expected First Result            ${HIST1_ARTICLE_PREFIX_NAME}
+    search_actions.Verify Search List Shows Article      ${api_first_result}
 
 
 

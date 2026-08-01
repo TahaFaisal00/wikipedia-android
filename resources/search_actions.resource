@@ -1,7 +1,9 @@
 *** Settings ***
-Library         AppiumLibrary
+Library          AppiumLibrary
 Library          String
-Resource        ../pages/search_page.resource
+Library          Collections
+Resource         ../pages/search_page.resource
+Resource         oracles/api_oracle.resource
 
 *** Keywords ***
 Navigate To Search Page
@@ -24,9 +26,19 @@ Search For Article
 Open Searched Article
     [Documentation]     Check the article is in the results, then open it.
     [Arguments]     ${article_name}
-    ${search_result_article_title}=       Format String    ${SEARCH_RESULT_ARTICLE_TITLE}         ${article_name}
-    Wait Until Page Contains Element    ${search_result_article_title}
+    Wait Until Page Contains Element    ${FIRST_RESULT_ARTICLE}
     Click Element    ${FIRST_RESULT_ARTICLE}
 
+Get Expected First Result
+    [Documentation]     Get the top title the API returns for the prefix.
+    [Arguments]     ${article_name}
+    @{api_titles}=       Get Expected Search Titles    ${article_name}
+    ${api_first_result}=     Get From List    ${api_titles}    0
+    RETURN        ${api_first_result}
 
+Verify Search List Shows Article
+    [Documentation]     Check the article title is in the search results on screen.
+    [Arguments]             ${article_name}
+    ${search_result_article_title}=       Format String    ${SEARCH_RESULT_ARTICLE_TITLE}         ${article_name}
+    Page Should Contain Element    ${search_result_article_title}
 
