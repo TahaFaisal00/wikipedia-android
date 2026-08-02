@@ -70,6 +70,16 @@ Search With No Matches Shows The Empty State
     search_actions.Verify Server Returns No Suggestions        ${NON_EXISTENT_ARTICLE}
     search_actions.Verify Search List Shows No Article
 
-
+Clearing The Search Field Restores The Recent Searches View
+    [Documentation]     Searches an article, then clears the field with the clear
+    ...                button and confirms the screen returns to the recent
+    ...                searches view with the searched term recorded in it.
+    [Tags]      search          oracle-ui
+    [Setup]     app.Skip Tutorial
+    search_actions.Navigate To Search Page
+    search_actions.Dismiss Faster Way To Search Tip
+    search_actions.Search For Article       ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Clear Search Field
+    search_actions.Verify Recent Searches Shows Article       ${HIST1H1B_ARTICLE_NAME}
 
 

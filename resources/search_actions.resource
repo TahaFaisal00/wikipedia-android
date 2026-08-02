@@ -49,8 +49,6 @@ Verify Server Returns No Suggestions
     ${titles}=    api_oracle.Get Expected Search Titles    ${article_name}
     Should Be Empty    ${titles}
 
-
-
 Verify Search List Shows Article
     [Documentation]     Check the article title is in the search results on screen.
     [Arguments]             ${article_name}
@@ -62,4 +60,18 @@ Verify Search List Shows No Article
     ...                The app renders one such message per configured search
     ...                language, all with identical text, so this matches any.
     Wait Until Page Contains Element    ${NO_RESULTS_MESSAGE}
+
+Clear Search Field
+    [Documentation]    Taps the clear button to empty the search field.
+    Wait Until Page Contains Element    ${CLEAR_QUERY_BUTTON}
+    Click Element    ${CLEAR_QUERY_BUTTON}
+
+Verify Recent Searches Shows Article
+    [Documentation]    Asserts the recent searches view is displayed and lists
+    ...                the given article as a previously searched term.
+    [Arguments]             ${article_name}
+    Wait Until Page Contains Element    ${RECENT_SEARCHES_HEADER}
+    ${recent_searched_article_title}=       Format String    ${SEARCH_RESULT_ARTICLE_TITLE}          ${article_name}
+    Wait Until Page Contains Element    ${recent_searched_article_title}
+
 
