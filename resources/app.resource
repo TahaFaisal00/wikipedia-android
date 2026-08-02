@@ -24,7 +24,7 @@ Open Wikipedia
     [Arguments]         ${language}=en    ${country}=US
     Open Application    ${REMOTE_URL}
     ...         platformName=${PLATFORM}      automationName=${AUTOMATION}
-    ...      deviceName=${DEVICE}              appPackage=${APP_PACKAGE}
+    ...      deviceName=${DEVICE}       appium:udid=${DEVICE}            appPackage=${APP_PACKAGE}
     ...         appActivity=${APP_ACTIVITY}             noReset=${FALSE}
     ...         newCommandTimeout=${300}    appium:chromedriverAutodownload=${True}
     ...       appium:language=${language}    appium:locale=${country}
