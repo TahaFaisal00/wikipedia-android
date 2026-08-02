@@ -46,9 +46,10 @@ Verify Device Locale Is Arabic
     ...                interface-translation claim made by the RTL tests themselves.
     ...                A failure here means the phone never switched — read it as
     ...                "the setup broke", not "the app is wrong".
-    ${locale}=    Execute Script    mobile: shell    ${{ {'command': 'getprop', 'args': ['persist.sys.locale']} }}
+    ${locale}=    Execute Script    mobile: shell
+    ...           command=getprop    args=${{ ['persist.sys.locale'] }}
     Should Start With    ${locale.strip()}    ar
-#"appium --allow-insecure=*:chromedriver_autodownload,*:adb_shell" is required
+#appium --allow-insecure="*:chromedriver_autodownload,*:adb_shell" is required
 
 Restart App Process
     [Documentation]    Kills and relaunches the app process WITHOUT clearing its data.
