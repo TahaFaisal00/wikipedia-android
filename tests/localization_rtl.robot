@@ -12,20 +12,22 @@ Suite Teardown          Close Application
 
 *** Test Cases ***
 Arabic Article Content Renders In Arabic Script
-    [Documentation]      [Documentation]     Opens an Arabic article and asserts its first paragraph matches
-    ...                 the AR API extract. The claim is the WebView content path under
-    ...                 Arabic — that the script survives rendering and the oracle is
-    ...                 bound to ar.wikipedia. Search is transport to the article here,
-    ...                 not the thing being tested; test 1 owns that claim.
-    [Tags]      article    oracle-api    localization
-    [Setup]     app.Restart App Process
+    [Documentation]     Opens an Arabic article and asserts its first paragraph matches
+    ...                 the AR API extract, and that the WebView renders it right to left.
+    ...                 Search is transport here, not the claim — test 1 owns that.
+    ...                 The direction assertion pairs with the LTR one in test 5: alone,
+    ...                 either reading could come from a keyword that always returns the
+    ...                 same value.
+    [Tags]              article     oracle-api      localization
+    [Setup]             app.Restart App Process
     search_actions.Navigate To Search Page
     search_actions.Search For Article    ${ARABIC_BAGHDAD_ARTICLE_NAME}
     search_actions.Open Searched Article    ${ARABIC_BAGHDAD_ARTICLE_NAME}
     article_actions.Dismiss Games Promo If Present
     article_actions.Verify Article Page Loaded    ${ARABIC_BAGHDAD_ARTICLE_TITLE}
     article_actions.Verify UI Paragraph Matches API Paragraph    ${ARABIC_BAGHDAD_ARTICLE_NAME}
-    [Teardown]    Run Keyword And Ignore Error    app.Return To Native Context
+    article_actions.Verify Article Content Direction    rtl
+    [Teardown]          Run Keyword And Ignore Error    app.Return To Native Context
 
 Arabic Search Reaches The Server Intact
     [Documentation]     Types an Arabic term into the search bar and asserts the
