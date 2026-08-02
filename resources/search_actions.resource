@@ -25,6 +25,7 @@ Search For Article
 
 Use Search Bar
     [Arguments]     ${article_name}
+    Wait Until Page Contains Element        ${SEARCH_FIELD}
     Input Text    ${SEARCH_FIELD}    ${article_name}
 
 Open Searched Article
