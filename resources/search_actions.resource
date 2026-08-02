@@ -21,6 +21,10 @@ Search For Article
     [Arguments]     ${article_name}
     Wait Until Page Contains Element    ${SEARCH_PLACEHOLDER}
     Click Element    ${SEARCH_PLACEHOLDER}
+    Use Search Bar    ${article_name}
+
+Use Search Bar
+    [Arguments]     ${article_name}
     Input Text    ${SEARCH_FIELD}    ${article_name}
 
 Open Searched Article
