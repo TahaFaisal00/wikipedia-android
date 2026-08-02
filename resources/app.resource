@@ -76,4 +76,9 @@ Return To Native Context
     ...                dies mid-WebView doesn't strand the next test in the DOM.
     Run Keyword And Ignore Error    Switch To Context    NATIVE_APP
 
-
+Open Deep Link
+    [Documentation]     Opens a URL directly in the app, bypassing in-app navigation.
+    ...                 Search is bound to the app's language, so it can only reach the
+    ...                 current locale's wiki — this can reach any of them.
+    [Arguments]    ${url}
+    Execute Script    mobile: deepLink    url=${url}    package=${APP_PACKAGE}

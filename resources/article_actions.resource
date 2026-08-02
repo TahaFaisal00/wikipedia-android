@@ -41,3 +41,18 @@ Verify UI Paragraph Matches API Paragraph
     ${api_article_paragraph}=       api_oracle.Get Expected Article Extract     ${article_name}
     Should Contain       ${api_article_paragraph}          ${ui_article_paragraph}
 
+Verify Article Content Direction
+    [Documentation]     Switch to WebView, Reads the CSS direction the WebView actually computed for the
+    ...                 article body. Content direction follows the ARTICLE's language,
+    ...                 not the interface's — an English article stays LTR inside a
+    ...                 mirrored Arabic app, and that is correct behavior, not a defect.
+    ...                 switch back to Native.
+    [Arguments]    ${expected}
+    Switch To Context    WEBVIEW_org.wikipedia.alpha
+    ${direction}=    Execute Script
+    ...    return getComputedStyle(document.querySelector('p')).direction
+    Should Be Equal    ${direction}    ${expected}
+    Switch To Context    NATIVE_APP
+
+
+

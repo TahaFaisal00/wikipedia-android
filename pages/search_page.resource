@@ -12,6 +12,8 @@ ${SEARCH_RESULT_ARTICLE_TITLE}          android=new UiSelector().text("{}")
 ${HIST1H1B_ARTICLE_NAME}         HIST1H1B
 ${HIST1_ARTICLE_PREFIX_NAME}         HIST1
 
+${ENGLISH_HIST1H1B_ARTICLE_URL}         https://en.wikipedia.org/wiki/HIST1H1B
+
 ${NO_RESULTS_MESSAGE}       android=new UiSelector().text("No results")
 ${NON_EXISTENT_ARTICLE}         gvnahpfxfcas
 

@@ -58,4 +58,18 @@ Arabic Interface Mirrors Layout Right To Left
     feed_actions.Verify Bottom Navigation Is Translated
     feed_actions.Verify Bottom Navigation Is Mirrored
 
+English Article Under Arabic Interface Keeps LTR Content Direction
+    [Documentation]     Content direction follows the ARTICLE's language, not the
+    ...                 interface's. An English article inside a mirrored Arabic app
+    ...                 stays left to right — correct behavior, locked as a passing test
+    ...                 rather than filed as a defect.
+    ...                 Reached by deep link because in-app search is bound to the app's
+    ...                 language and can only return Arabic results under this locale.
+    [Tags]              article     localization
+    [Setup]             app.Restart App Process
+    app.Open Deep Link    ${ENGLISH_HIST1H1B_ARTICLE_URL}
+    article_actions.Dismiss Games Promo If Present
+    article_actions.Verify Article Page Loaded    ${HIST1H1B_ARTICLE_TITLE}
+    article_actions.Verify Article Content Direction    ltr
+    [Teardown]          Run Keyword And Ignore Error    app.Return To Native Context
 
