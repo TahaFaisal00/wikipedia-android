@@ -5,6 +5,11 @@ Resource        ../resources/search_actions.resource
 Suite Setup         Run Keywords        Open Wikipedia      AND          Open Session       ${WIKI_EN}
 Suite Teardown          Close Application
 
+*** Variables ***
+${CLEAR_QUERY_BUTTON}           accessibility_id=Clear query
+${RECENT_SEARCHES_TEXT}         id=org.wikipedia.alpha:id/list_title
+
+
 *** Test Cases ***
 Search Returns The Requested Article
     [Documentation]     Search for an article by its exact name, open it from the results,
@@ -56,4 +61,16 @@ Search Results Update When The Query Changes
     search_actions.Use Search Bar       ${HIST1H1B_ARTICLE_NAME}
     ${api_first_result}=    search_actions.Get Expected First Result            ${HIST1H1B_ARTICLE_NAME}
     search_actions.Verify Search List Shows Article      ${api_first_result}
+
+Search With No Matches Shows The Empty State
+    [Documentation]
+    [Tags]              search      oracle-api
+    [Setup]     app.Skip Tutorial
+    search_actions.Navigate To Search Page
+    search_actions.Dismiss Faster Way To Search Tip
+    search_actions.Search For Article                   ${NON_EXISTENT_ARTICLE}
+    search_actions.Verify Search List Shows No Article
+    search_actions.Verify Server Returns No Suggestions        ${NON_EXISTENT_ARTICLE}
+
+
 

@@ -40,9 +40,25 @@ Get Expected First Result
     ${api_first_result}=     Get From List    ${api_titles}    0
     RETURN        ${api_first_result}
 
+Verify Server Returns No Suggestions
+    [Documentation]    Asserts the prefixsearch API returns no suggestions for
+    ...                the given term, confirming an empty UI is correct and not
+    ...                a client-side failure to render results.
+    [Arguments]    ${article_name}
+    ${titles}=    api_oracle.Get Expected Search Titles    ${article_name}
+    Should Be Empty    ${titles}
+
+
+
 Verify Search List Shows Article
     [Documentation]     Check the article title is in the search results on screen.
     [Arguments]             ${article_name}
     ${search_result_article_title}=       Format String    ${SEARCH_RESULT_ARTICLE_TITLE}         ${article_name}
     Page Should Contain Element    ${search_result_article_title}
+
+Verify Search List Shows No Article
+    [Documentation]     Asserts the search screen shows the no-results message.
+    ...                The app renders one such message per configured search
+    ...                language, all with identical text, so this matches any.
+    Wait Until Page Contains Element    ${NO_RESULTS_MESSAGE}
 

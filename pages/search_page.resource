@@ -11,3 +11,8 @@ ${SEARCH_RESULT_ARTICLE_TITLE}          android=new UiSelector().text("{}")
 
 ${HIST1H1B_ARTICLE_NAME}         HIST1H1B
 ${HIST1_ARTICLE_PREFIX_NAME}         HIST1
+
+${NO_RESULTS_MESSAGE}       android=new UiSelector().text("No results")
+${NON_EXISTENT_ARTICLE}         gvnahpfxfcas
+
+
