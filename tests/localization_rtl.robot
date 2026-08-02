@@ -49,6 +49,13 @@ Feed Filter Tabs Stay In English Under An Arabic Interface
     feed_actions.Verify Bottom Navigation Is Translated
     feed_actions.Verify Feed Filter Tabs Are Untranslated
 
-
+Arabic Interface Mirrors Layout Right To Left
+    [Documentation]     Translation and mirroring are separate things — an app can
+    ...                 translate every string and still lay the screen out left to right.
+    ...                 The first line is the premise, the second is the claim.
+    [Tags]      feed    localization    rtl
+    [Setup]     app.Restart App Process
+    feed_actions.Verify Bottom Navigation Is Translated
+    feed_actions.Verify Bottom Navigation Is Mirrored
 
 

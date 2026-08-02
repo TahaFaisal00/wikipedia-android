@@ -17,6 +17,14 @@ Verify Feed Filter Tabs Are Untranslated
     Wait Until Page Contains Element    ${ENGLISH_COMMUNITY_FEED_FILTER}
     Wait Until Page Contains Element    ${ENGLISH_FOR_YOU_FEED_FILTER}
 
+Verify Bottom Navigation Is Mirrored
+    [Documentation]     Under LTR the Search tab sits left of More. Under Arabic the bar
+    ...                 mirrors, so Search must sit to the RIGHT of More. Compares the two
+    ...                 x positions against each other rather than absolute coordinates,
+    ...                 so it holds on any screen size or density.
+    ${search}=    Get Element Location    ${ARABIC_SEARCH_BAR_NAME}
+    ${more}=      Get Element Location    ${ARABIC_MORE_BAR_NAME}
+    Should Be True    ${search}[x] > ${more}[x]
 
 
 
