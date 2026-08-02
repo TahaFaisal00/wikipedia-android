@@ -4,8 +4,16 @@ Library          String
 Library          Collections
 Resource         ../pages/search_page.resource
 Resource         oracles/api_oracle.resource
-
+Resource         app.resource
 *** Keywords ***
+Reset To Search Page
+    [Documentation]    Test Setup. Puts the test on the search page from an unknown
+    ...                starting screen. Restarts the process rather than pressing back,
+    ...                because a test that ends inside a WebView, a dialog, or a dead
+    ...                network state can't be walked back reliably.
+    app.Restart App Process
+    Navigate To Search Page
+
 Navigate To Search Page
     [Documentation]     Tap the search bar to open the search screen.
     Wait Until Page Contains Element    ${SEARCH_BAR}

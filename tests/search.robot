@@ -2,7 +2,9 @@
 Resource        ../resources/app.resource
 Resource      ../resources/article_actions.resource
 Resource        ../resources/search_actions.resource
-Suite Setup         Run Keywords        Open Wikipedia      AND          Open Session       ${WIKI_EN}
+Suite Setup    Run Keywords    app.Start Session
+...            AND    search_actions.Navigate To Search Page
+...            AND    search_actions.Dismiss Faster Way To Search Tip
 Suite Teardown          Close Application
 
 *** Test Cases ***
@@ -18,9 +20,7 @@ Search Returns The Requested Article
     ...                Note: clicking the first row is safe here because exact-name search
     ...                puts the article on top — that's a different endpoint from prefix search.
     [Tags]      search          oracle-api
-    [Setup]     app.Skip Tutorial
-    search_actions.Navigate To Search Page
-    search_actions.Dismiss Faster Way To Search Tip
+    [Setup]     search_actions.Reset To Search Page
     search_actions.Search For Article       ${HIST1H1B_ARTICLE_NAME}
     search_actions.Verify Search List Shows Article        ${HIST1H1B_ARTICLE_NAME}
     search_actions.Open Searched Article        ${HIST1H1B_ARTICLE_NAME}
@@ -34,9 +34,7 @@ Search Results Match What The Server Returned
     ...                same result shows up in the search list on screen.
     ...                UI acts, API observes.
     [Tags]              search      oracle-api
-    [Setup]     app.Skip Tutorial
-    search_actions.Navigate To Search Page
-    search_actions.Dismiss Faster Way To Search Tip
+    [Setup]     search_actions.Reset To Search Page
     search_actions.Search For Article                   ${HIST1_ARTICLE_PREFIX_NAME}
     ${api_first_result}=    search_actions.Get Expected First Result            ${HIST1_ARTICLE_PREFIX_NAME}
     search_actions.Verify Search List Shows Article      ${api_first_result}
@@ -47,9 +45,7 @@ Search Results Update When The Query Changes
     ...                showing stale results from the previous one. Both states are
     ...                verified against the prefixsearch API oracle.
     [Tags]              search      oracle-api
-    [Setup]     app.Skip Tutorial
-    search_actions.Navigate To Search Page
-    search_actions.Dismiss Faster Way To Search Tip
+    [Setup]     search_actions.Reset To Search Page
     search_actions.Search For Article                   ${HIST1_ARTICLE_PREFIX_NAME}
     ${api_first_result}=    search_actions.Get Expected First Result            ${HIST1_ARTICLE_PREFIX_NAME}
     search_actions.Verify Search List Shows Article      ${api_first_result}
@@ -63,9 +59,7 @@ Search With No Matches Shows The Empty State
     ...                verifying that zero results is the server's actual answer
     ...                and not a failure to render results that were returned.
     [Tags]              search      oracle-api
-    [Setup]     app.Skip Tutorial
-    search_actions.Navigate To Search Page
-    search_actions.Dismiss Faster Way To Search Tip
+    [Setup]      search_actions.Reset To Search Page
     search_actions.Search For Article                   ${NON_EXISTENT_ARTICLE}
     search_actions.Verify Server Returns No Suggestions        ${NON_EXISTENT_ARTICLE}
     search_actions.Verify Search List Shows No Article
@@ -75,9 +69,7 @@ Clearing The Search Field Restores The Recent Searches View
     ...                button and confirms the screen returns to the recent
     ...                searches view with the searched term recorded in it.
     [Tags]      search          oracle-ui
-    [Setup]     app.Skip Tutorial
-    search_actions.Navigate To Search Page
-    search_actions.Dismiss Faster Way To Search Tip
+    [Setup]      search_actions.Reset To Search Page
     search_actions.Search For Article       ${HIST1H1B_ARTICLE_NAME}
     search_actions.Clear Search Field
     search_actions.Verify Recent Searches Shows Article       ${HIST1H1B_ARTICLE_NAME}
