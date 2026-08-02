@@ -41,9 +41,19 @@ Search Results Match What The Server Returned
     ${api_first_result}=    search_actions.Get Expected First Result            ${HIST1_ARTICLE_PREFIX_NAME}
     search_actions.Verify Search List Shows Article      ${api_first_result}
 
-
-
-
-
-
+Search Results Update When The Query Changes
+    [Documentation]     Runs one query, then replaces it with a different one and
+    ...                confirms the results list follows the new query instead of
+    ...                showing stale results from the previous one. Both states are
+    ...                verified against the prefixsearch API oracle.
+    [Tags]              search      oracle-api
+    [Setup]     app.Skip Tutorial
+    search_actions.Navigate To Search Page
+    search_actions.Dismiss Faster Way To Search Tip
+    search_actions.Search For Article                   ${HIST1_ARTICLE_PREFIX_NAME}
+    ${api_first_result}=    search_actions.Get Expected First Result            ${HIST1_ARTICLE_PREFIX_NAME}
+    search_actions.Verify Search List Shows Article      ${api_first_result}
+    search_actions.Use Search Bar       ${HIST1H1B_ARTICLE_NAME}
+    ${api_first_result}=    search_actions.Get Expected First Result            ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Verify Search List Shows Article      ${api_first_result}
 
