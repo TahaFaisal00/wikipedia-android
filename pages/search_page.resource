@@ -19,3 +19,4 @@ ${CLEAR_QUERY_BUTTON}           accessibility_id=Clear query
 ${RECENT_SEARCHES_HEADER}         id=org.wikipedia.alpha:id/list_title
 
 ${ARABIC_BAGHDAD_ARTICLE_NAME}          بغداد
+${ARABIC_BAGHDAD_ARTICLE_TITLE}          android=new UiSelector().text("بغداد")

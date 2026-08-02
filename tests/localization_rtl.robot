@@ -11,6 +11,22 @@ Suite Setup            Run Keywords      app.Start Session     ar  EG  ${WIKI_AR
 Suite Teardown          Close Application
 
 *** Test Cases ***
+Arabic Article Content Renders In Arabic Script
+    [Documentation]      [Documentation]     Opens an Arabic article and asserts its first paragraph matches
+    ...                 the AR API extract. The claim is the WebView content path under
+    ...                 Arabic — that the script survives rendering and the oracle is
+    ...                 bound to ar.wikipedia. Search is transport to the article here,
+    ...                 not the thing being tested; test 1 owns that claim.
+    [Tags]      article    oracle-api    localization
+    [Setup]     app.Restart App Process
+    search_actions.Navigate To Search Page
+    search_actions.Search For Article    ${ARABIC_BAGHDAD_ARTICLE_NAME}
+    search_actions.Open Searched Article    ${ARABIC_BAGHDAD_ARTICLE_NAME}
+    article_actions.Dismiss Games Promo If Present
+    article_actions.Verify Article Page Loaded    ${ARABIC_BAGHDAD_ARTICLE_TITLE}
+    article_actions.Verify UI Paragraph Matches API Paragraph    ${ARABIC_BAGHDAD_ARTICLE_NAME}
+    [Teardown]    Run Keyword And Ignore Error    app.Return To Native Context
+
 Arabic Search Reaches The Server Intact
     [Documentation]     Types an Arabic term into the search bar and asserts the
     ...                 article the AR prefixsearch API returns as top hit appears
@@ -32,7 +48,6 @@ Feed Filter Tabs Stay In English Under An Arabic Interface
     [Setup]         app.Restart App Process
     feed_actions.Verify Bottom Navigation Is Translated
     feed_actions.Verify Feed Filter Tabs Are Untranslated
-
 
 
 
