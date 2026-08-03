@@ -88,3 +88,23 @@ Wait Until Article Is Not Saved
     [Arguments]    ${api_title}
     Wait Until Keyword Succeeds    30s    2s
     ...    Verify Article Is Not Saved    ${api_title}
+
+Get Reading List Rows
+    [Documentation]    Oracle. Reads the local snapshot, never the device.
+    ...    Returns every ReadingList row with the given title, as a list.
+    ...    The default list stores an empty listTitle, so a named list is always
+    ...    a user-created one.
+    ...    dirty and remoteId are selected but not interpreted here - they relate
+    ...    to server sync, which this suite does not exercise.
+    [Arguments]    ${list_title}
+    Snapshot Device Database
+    Connect To Database    sqlite3    ${LOCAL_DB}
+    ${rows}=    Query
+    ...    SELECT listTitle, id, sizeBytes FROM ReadingList WHERE listTitle = ?
+    ...    parameters=${{ ($list_title,) }}
+    RETURN    ${rows}
+    [Teardown]    Disconnect From Database
+
+
+
+
