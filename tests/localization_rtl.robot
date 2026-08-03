@@ -7,7 +7,7 @@ Resource        ../resources/feed_actions.resource
 Suite Setup            Run Keywords      app.Start Session     ar  EG  ${WIKI_AR}
 ...            AND     app.Verify Device Locale Is Arabic
 ...            AND     search_actions.Navigate To Search Page
-...            AND     search_actions.Dismiss Faster Way To Search Tip
+...            AND     search_actions.Dismiss Faster Way To Search Tip If Present
 Suite Teardown          Close Application
 
 *** Test Cases ***

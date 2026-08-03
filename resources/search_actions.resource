@@ -19,10 +19,17 @@ Navigate To Search Page
     Wait Until Page Contains Element    ${SEARCH_BAR}
     Click Element    ${SEARCH_BAR}
 
-Dismiss Faster Way To Search Tip
-    [Documentation]     Close the "faster way to search" popup.
-    Wait Until Page Contains Element    ${FASTER_WAY_TO_SEARCH_WINDOW_CLOSE_BUTTON}
-    Click Element    ${FASTER_WAY_TO_SEARCH_WINDOW_CLOSE_BUTTON}
+Dismiss Faster Way To Search Tip If Present
+    [Documentation]    Closes the "faster way to search" tip if it is showing.
+    ...    The tip is one-shot session state: it appears once and never again,
+    ...    so a hard wait would fail on every test after the first.
+    ...    Uses Page Should Contain Element rather than a Wait, so an absent tip
+    ...    costs no timeout.
+    ${present}=    Run Keyword And Return Status
+    ...    Page Should Contain Element    ${FASTER_WAY_TO_SEARCH_WINDOW_CLOSE_BUTTON}
+    IF    ${present}
+        Click Element    ${FASTER_WAY_TO_SEARCH_WINDOW_CLOSE_BUTTON}
+    END
 
 Search For Article
     [Documentation]     Tap the search field and type the article name.
