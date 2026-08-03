@@ -111,5 +111,32 @@ Saved Articles Survive An App Restart
     ...           reading_list_actions.Open Saved Article    ${HIST1H1B_ARTICLE_NAME}
     ...           AND    article_actions.Remove Article From List
 
-
+Adding A Saved Article To A New Reading List Persists The List
+    [Documentation]    Covers the third Save context-menu branch and a second
+    ...    table.
+    ...    List membership is many-to-many: adding to another list writes a
+    ...    second ReadingListPage row rather than moving the existing one, so the
+    ...    article ends up in both lists at once.
+    ...    The claim spans two tables - the named list exists, and the article
+    ...    has a row pointing at it. Checking only that the list was created
+    ...    would pass while the article stayed in the default list alone.
+    [Tags]      offline    oracle-db
+    [Setup]     Run Keywords          search_actions.Reset To Search Page
+    ...        AND      search_actions.Dismiss Faster Way To Search Tip If Present
+    ...        AND    search_actions.Navigate From Search Page To Saved Page
+    ...        AND    reading_list_actions.Ensure Reading List Does Not Exist    ${CUSTOM_LIST_NAME}
+    ...        AND    search_actions.Reset To Search Page
+    ...        AND    db_oracle.Wait Until Article Is Not Saved   ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Dismiss Faster Way To Search Tip If Present
+    search_actions.Search For Article                ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Open Searched Article             ${HIST1H1B_ARTICLE_NAME}
+    article_actions.Dismiss Games Promo If Present
+    article_actions.Save Article
+    article_actions.Verify Snackbar Says             ${SAVED_SNACKBAR_TEXT}
+    db_oracle.Wait Until Saved Article Row Is Correct    ${HIST1H1B_ARTICLE_NAME}
+    article_actions.Add Article To New Reading List    ${CUSTOM_LIST_NAME}
+    reading_list_actions.Verify Article Is In Reading List
+    ...        ${HIST1H1B_ARTICLE_NAME}    ${CUSTOM_LIST_NAME}
+    [Teardown]    Run Keyword And Ignore Error        reading_list_actions.Clean Up Saved State
+    ...           ${HIST1H1B_ARTICLE_NAME}    ${CUSTOM_LIST_NAME}
 

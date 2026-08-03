@@ -60,8 +60,6 @@ Verify Saved Article Is Listed
     Wait Until Page Contains Element    ${THE_ONLY_SAVED_ARTICLE_IN_DEFAULT_LIST}
     Element Should Contain Text         ${THE_ONLY_SAVED_ARTICLE_IN_DEFAULT_LIST}    ${title}
 
-
-
 Long Press Element
     [Documentation]    Long-presses an element. AppiumLibrary only ships a
     ...    keycode long-press, so this drops to the UiAutomator2 gesture.
@@ -69,6 +67,80 @@ Long Press Element
     ${el}=    Get Webelement    ${locator}
     Execute Script    mobile: longClickGesture
     ...    elementId=${el.id}    duration=${duration}
+
+Verify Article Is In Reading List
+    [Documentation]    Asserts the article was persisted into a named list while
+    ...    remaining in the default one.
+    ...    List membership is many-to-many: adding to another list writes a
+    ...    second ReadingListPage row rather than moving the existing one. So the
+    ...    claim is two rows for one article, one per list, not a single row with
+    ...    a changed listId.
+    ...    Checking only that the list exists would pass while the article sat in
+    ...    the default list alone, which is the bug worth catching.
+    ...    Column order - lists: 0 listTitle, 1 id. Pages: 0 apiTitle, 1 offline,
+    ...    2 status, 3 sizeBytes, 4 listId.
+    [Arguments]    ${api_title}    ${list_title}
+    ${lists}=    db_oracle.Get Reading List Rows    ${list_title}
+    Length Should Be    ${lists}    1
+    ${list_id}=    Set Variable    ${lists}[0][1]
+    Should Not Be Equal As Integers    ${list_id}    ${DEFAULT_LIST_ID}
+    ...    msg=The named list resolved to the default list
+    ${rows}=    db_oracle.Get Saved Article Rows    ${api_title}
+    Length Should Be    ${rows}    2
+    ${list_ids}=    Evaluate    sorted(r[4] for r in $rows)
+    Should Be Equal    ${list_ids}    ${{ sorted([int($DEFAULT_LIST_ID), int($list_id)]) }}
+
+Delete Reading List
+    [Documentation]    Deletes a named reading list from the Saved screen.
+    ...    Deleting the list removes its ReadingListPage rows with it, so this
+    ...    also clears the article's membership in that list. The default list
+    ...    is unaffected.
+    ...    Only works for user-created lists: the default list has no delete
+    ...    option and no usable locator.
+    [Arguments]    ${list_name}
+    ${locator}=    Set Variable    android=new UiSelector().text("${list_name}")
+    Wait Until Page Contains Element    ${locator}
+    Long Press Element                          ${locator}
+    Wait Until Page Contains Element    ${DELETE_LIST_MENU_ITEM}
+    Click Element                       ${DELETE_LIST_MENU_ITEM}
+    Wait Until Page Contains Element    ${CONFIRM_DIALOG_OK}
+    Click Element                       ${CONFIRM_DIALOG_OK}
+    Verify Snackbar Says                ${list_name}
+
+Ensure Reading List Does Not Exist
+    [Documentation]    Setup helper. Deletes a named list if a previous run left
+    ...    one behind.
+    ...    Setup makes the starting state true rather than only checking it,
+    ...    otherwise one failed run blocks every run after it.
+    ...    Must run from the Saved screen.
+    [Arguments]    ${list_name}
+    ${rows}=    db_oracle.Get Reading List Rows    ${list_name}
+    IF    len($rows) > 0
+        Delete Reading List    ${list_name}
+    END
+
+Clean Up Saved State
+    [Documentation]    Teardown helper. Leaves no custom list and no saved
+    ...    article behind, from wherever the test ended.
+    ...    Order matters: deleting the custom list first drops the article to a
+    ...    single list, so the Save context menu falls back to the simple
+    ...    "remove from saved" branch instead of the multi-list checkbox dialog.
+    ...    That dialog's shape depends on how many lists the article is in, which
+    ...    is unpredictable after a failure.
+    ...    Each step is guarded against the state already being clean, since a
+    ...    teardown also runs on the unhappy path.
+    [Arguments]    ${api_title}    ${list_name}
+    Run Keyword And Ignore Error    article_actions.Navigate Back To Search Page
+    search_actions.Navigate From Search Page To Saved Page
+    Ensure Reading List Does Not Exist    ${list_name}
+    ${rows}=    db_oracle.Get Saved Article Rows    ${api_title}
+    IF    len($rows) > 0
+        Open Default Saved List
+        Open Saved Article    ${api_title}
+        article_actions.Remove Article From List
+    END
+
+
 
 
 

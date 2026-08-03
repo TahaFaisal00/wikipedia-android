@@ -4,7 +4,7 @@ Library          String
 Resource        ../pages/article_page.resource
 Resource        oracles/api_oracle.resource
 Resource        reading_list_actions.resource
-
+Resource        oracles/db_oracle.resource
 *** Keywords ***
 Normalize Article Text
     [Documentation]    Kill the [1][2] markers and squash whitespace so UI and API compare clean.
@@ -109,4 +109,22 @@ Navigate Back To Search Page
     END
     Wait Until Page Contains Element    ${SAVED_BAR}
 
-
+Add Article To New Reading List
+    [Documentation]    Creates a named reading list from the article screen and
+    ...    adds the current article to it.
+    ...    Goes through the Save context menu rather than the snackbar's action
+    ...    button: the snackbar is on a timer and would race the test. The menu
+    ...    is also the branch this test exists to cover.
+    ...    The confirmation asserts the list name, which the snackbar includes -
+    ...    that is what distinguishes this message from the plain save one.
+    [Arguments]    ${list_name}
+    Wait Until Page Contains Element    ${SAVE_ARTICLE_BUTTON}
+    Click Element                       ${SAVE_ARTICLE_BUTTON}
+    Wait Until Page Contains Element    ${ADD_TO_ANOTHER_LIST_MENU_ITEM}
+    Click Element                       ${ADD_TO_ANOTHER_LIST_MENU_ITEM}
+    Wait Until Page Contains Element    ${CREATE_NEW_LIST_BUTTON}
+    Click Element                       ${CREATE_NEW_LIST_BUTTON}
+    Wait Until Page Contains Element    ${LIST_NAME_FIELD}
+    Input Text                          ${LIST_NAME_FIELD}    ${list_name}
+    Click Element                       ${ADD_TO_LIST_OK_BUTTON}
+    Verify Snackbar Says                ${list_name}

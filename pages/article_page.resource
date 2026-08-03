@@ -13,3 +13,6 @@ ${SAVED_SNACKBAR_TEXT}      Do you want to add it to a list?
 ${REMOVED_SNACKBAR_TEXT}    removed from Saved
 
 ${RETURN_BUTTON}                    accessibility_id=Navigate up
+
+${ADD_TO_ANOTHER_LIST_MENU_ITEM}    android=new UiSelector().text("Add to another reading list")
+${CREATE_NEW_LIST_BUTTON}           android=new UiSelector().text("Create new")
