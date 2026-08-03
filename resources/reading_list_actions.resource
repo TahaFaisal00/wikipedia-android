@@ -6,6 +6,9 @@ Resource         ../pages/search_page.resource
 Resource         oracles/api_oracle.resource
 Resource         app.resource
 Resource        ../pages/reading_list_page.resource
+Resource        oracles/db_oracle.resource
+Resource        article_actions.resource
+Resource        search_actions.resource
 *** Keywords ***
 Dismiss Sync Reading Lists Prompt If Present
     [Documentation]    Declines the "sync your reading lists" prompt if it shows.
@@ -59,7 +62,13 @@ Verify Saved Article Is Listed
 
 
 
-
+Long Press Element
+    [Documentation]    Long-presses an element. AppiumLibrary only ships a
+    ...    keycode long-press, so this drops to the UiAutomator2 gesture.
+    [Arguments]    ${locator}    ${duration}=1000
+    ${el}=    Get Webelement    ${locator}
+    Execute Script    mobile: longClickGesture
+    ...    elementId=${el.id}    duration=${duration}
 
 
 
