@@ -91,3 +91,21 @@ Verify UI Paragraph Matches Extract
     [Arguments]    ${expected_extract}
     ${ui_article_paragraph}=    Read Article Body Text
     Should Contain    ${expected_extract}    ${ui_article_paragraph}
+
+Navigate Back To Search Page
+    [Documentation]    Returns from an article to the search screen.
+    ...    Waits for the search screen rather than counting back taps: the depth
+    ...    of the back stack depends on how the article was reached, and blind
+    ...    consecutive taps race the screen transition.
+    ...    The sync prompt can appear on the way back and is dismissed if seen.
+    Wait Until Page Contains Element    ${RETURN_BUTTON}
+    Click Element                       ${RETURN_BUTTON}
+    reading_list_actions.Dismiss Sync Reading Lists Prompt If Present
+    ${on_search}=    Run Keyword And Return Status
+    ...    Page Should Contain Element    ${SAVED_BAR}
+    IF    not ${on_search}
+        Click Element    ${RETURN_BUTTON}
+    END
+    Wait Until Page Contains Element    ${SAVED_BAR}
+
+

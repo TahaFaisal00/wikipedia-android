@@ -11,3 +11,5 @@ ${ADD_TO_LIST_OK_BUTTON}            id=android:id/button1
 
 ${SAVED_SNACKBAR_TEXT}      Do you want to add it to a list?
 ${REMOVED_SNACKBAR_TEXT}    removed from Saved
+
+${RETURN_BUTTON}                    accessibility_id=Navigate up
