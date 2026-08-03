@@ -54,5 +54,29 @@ Verify Article Content Direction
     Should Be Equal    ${direction}    ${expected}
     Switch To Context    NATIVE_APP
 
+Save Article
+    [Documentation]     Taps Save on an UNSAVED article.
+    ...    The Save control is state dependent: on an already-saved article the
+    ...    same tap opens a context menu instead. The caller must guarantee the
+    ...    unsaved starting state, because this keyword does not check it.
+    Wait Until Page Contains Element    ${SAVE_ARTICLE_BUTTON}
+    Click Element                       ${SAVE_ARTICLE_BUTTON}
 
-
+Verify Snackbar Says
+    [Documentation]     Asserts the snackbar carries the expected message.
+    ...    Save, move and remove all use the same snackbar id, so waiting for the
+    ...    element alone would pass for any of them. The text is the only
+    ...    discriminator. Also acts as the sync gate before a DB snapshot.
+    [Arguments]    ${expected_text}
+    Wait Until Page Contains Element    ${SNACKBAR_TEXT}
+    Element Should Contain Text         ${SNACKBAR_TEXT}    ${expected_text}
+    
+Remove Article From List
+    [Documentation]     Un-saves an article that is currently SAVED.
+    ...    Un-saving is not a second tap on Save: that tap opens a context menu
+    ...    and the removal lives inside it. Used as teardown so the next test
+    ...    starts unsaved.
+    Click Element                       ${SAVE_ARTICLE_BUTTON}
+    Wait Until Page Contains Element    ${REMOVE_FROM_LIST_BUTTON}
+    Click Element                       ${REMOVE_FROM_LIST_BUTTON}
+    Verify Snackbar Says                ${REMOVED_SNACKBAR_TEXT}
