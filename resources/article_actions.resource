@@ -2,7 +2,8 @@
 Library         AppiumLibrary
 Library          String
 Resource        ../pages/article_page.resource
-Resource        ../resources/oracles/api_oracle.resource
+Resource        oracles/api_oracle.resource
+Resource        reading_list_actions.resource
 
 *** Keywords ***
 Normalize Article Text
@@ -80,3 +81,13 @@ Remove Article From List
     Wait Until Page Contains Element    ${REMOVE_FROM_LIST_BUTTON}
     Click Element                       ${REMOVE_FROM_LIST_BUTTON}
     Verify Snackbar Says                ${REMOVED_SNACKBAR_TEXT}
+
+Verify UI Paragraph Matches Extract
+    [Documentation]    Reads the first paragraph on screen and checks it sits
+    ...    inside the given API extract. UI acts, API observes.
+    ...    Takes the extract as an argument rather than fetching it, so callers
+    ...    that cannot reach the API - the offline test - can fetch it earlier
+    ...    and still use the same comparison.
+    [Arguments]    ${expected_extract}
+    ${ui_article_paragraph}=    Read Article Body Text
+    Should Contain    ${expected_extract}    ${ui_article_paragraph}
