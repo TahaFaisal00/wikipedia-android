@@ -80,4 +80,11 @@ Wait Until Saved Article Row Is Correct
     Wait Until Keyword Succeeds    30s    2s
     ...    Verify Saved Article Row Is Correct    ${api_title}
 
-
+Wait Until Article Is Not Saved
+    [Documentation]    Polls the DB until no row remains for the article.
+    ...    Removal is asynchronous: the row survives briefly after the UI
+    ...    confirms the removal, so a single read can catch it mid-delete.
+    ...    Each retry retakes the snapshot, so every attempt reads fresh state.
+    [Arguments]    ${api_title}
+    Wait Until Keyword Succeeds    30s    2s
+    ...    Verify Article Is Not Saved    ${api_title}

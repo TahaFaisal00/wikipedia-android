@@ -16,8 +16,8 @@ Saving An Article Offline Persists A Correct Row
     ...    they carry sync waits but no business assertions.
     [Tags]      offline     oracle-db
     [Setup]     Run Keywords        search_actions.Reset To Search Page
-    ...         AND                 db_oracle.Verify Article Is Not Saved    ${HIST1H1B_ARTICLE_NAME}
-    search_actions.Dismiss Faster Way To Search Tip
+    ...         AND                 db_oracle.Wait Until Article Is Not Saved   ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Dismiss Faster Way To Search Tip If Present
     search_actions.Search For Article       ${HIST1H1B_ARTICLE_NAME}
     search_actions.Verify Search List Shows Article        ${HIST1H1B_ARTICLE_NAME}
     search_actions.Open Searched Article        ${HIST1H1B_ARTICLE_NAME}
@@ -26,3 +26,25 @@ Saving An Article Offline Persists A Correct Row
     article_actions.Verify Snackbar Says             ${SAVED_SNACKBAR_TEXT}
     db_oracle.Wait Until Saved Article Row Is Correct    ${HIST1H1B_ARTICLE_NAME}
     [Teardown]      article_actions.Remove Article From List
+
+Removing A Saved Article Deletes Its Row
+    [Documentation]     Covers the second branch of the state-dependent Save
+    ...    button: on a saved article the tap opens a context menu instead of
+    ...    toggling, and the removal lives inside it.
+    ...    Saving here is setup, not the claim - test 1 already proves it. The
+    ...    claim is that removal leaves no row behind, so the DB is the oracle.
+    ...    The snackbar only proves the app acknowledged the tap.
+    [Tags]      offline     oracle-db
+    [Setup]     Run Keywords        search_actions.Reset To Search Page
+    ...         AND                 db_oracle.Wait Until Article Is Not Saved    ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Dismiss Faster Way To Search Tip If Present
+    search_actions.Search For Article       ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Verify Search List Shows Article        ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Open Searched Article        ${HIST1H1B_ARTICLE_NAME}
+    article_actions.Dismiss Games Promo If Present
+    article_actions.Save Article
+    article_actions.Verify Snackbar Says             ${SAVED_SNACKBAR_TEXT}
+    article_actions.Remove Article From List
+    db_oracle.Wait Until Article Is Not Saved    ${HIST1H1B_ARTICLE_NAME}
+    [Teardown]    Run Keyword And Ignore Error
+    ...           article_actions.Remove Article From List
