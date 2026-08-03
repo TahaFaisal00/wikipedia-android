@@ -46,7 +46,16 @@ Open Saved Article
     Wait Until Page Contains Element    ${locator}
     Click Element                       ${locator}
 
-
+Verify Saved Article Is Listed
+    [Documentation]    Asserts the article appears in the open reading list.
+    ...    Matches the row by id and checks the title as text. A text-based
+    ...    selector is not usable here - the title does not appear in the tree
+    ...    until the list holds more than one article.
+    ...    Because the id is not unique once a second article is added, this
+    ...    keyword is only valid for a single-article list.
+    [Arguments]    ${title}
+    Wait Until Page Contains Element    ${THE_ONLY_SAVED_ARTICLE_IN_DEFAULT_LIST}
+    Element Should Contain Text         ${THE_ONLY_SAVED_ARTICLE_IN_DEFAULT_LIST}    ${title}
 
 
 

@@ -84,7 +84,32 @@ Saved Article Is Readable With The Network Off
     ...           network.Enable Network
     ...           AND    Run Keyword And Ignore Error    article_actions.Remove Article From List
 
-
+Saved Articles Survive An App Restart
+    [Documentation]    Durability. A save must outlive the process that made it.
+    ...    Two separate claims, both needed: the row is still on disk, and the
+    ...    app still surfaces it in the Saved list. A row nobody can reach is
+    ...    not a working save, and a list entry with no row would be a stale view.
+    ...    The app is killed with force-stop, so it gets no chance to flush on
+    ...    shutdown - anything that survives was already persisted.
+    [Tags]      offline    oracle-db
+    [Setup]     Run Keywords        search_actions.Reset To Search Page
+    ...         AND                 db_oracle.Wait Until Article Is Not Saved    ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Dismiss Faster Way To Search Tip If Present
+    search_actions.Search For Article                ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Open Searched Article             ${HIST1H1B_ARTICLE_NAME}
+    article_actions.Dismiss Games Promo If Present
+    article_actions.Save Article
+    article_actions.Verify Snackbar Says             ${SAVED_SNACKBAR_TEXT}
+    db_oracle.Wait Until Saved Article Row Is Correct    ${HIST1H1B_ARTICLE_NAME}
+    app.Restart App Cold
+    search_actions.Dismiss Faster Way To Search Tip If Present
+    search_actions.Navigate From Search Page To Saved Page
+    reading_list_actions.Open Default Saved List
+    reading_list_actions.Verify Saved Article Is Listed    ${HIST1H1B_ARTICLE_NAME}
+    db_oracle.Wait Until Saved Article Row Is Correct    ${HIST1H1B_ARTICLE_NAME}
+    [Teardown]    Run Keyword And Ignore Error    Run Keywords
+    ...           reading_list_actions.Open Saved Article    ${HIST1H1B_ARTICLE_NAME}
+    ...           AND    article_actions.Remove Article From List
 
 
 

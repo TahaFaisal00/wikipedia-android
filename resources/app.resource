@@ -1,5 +1,6 @@
 *** Settings ***
 Library         AppiumLibrary
+Library    Process
 Resource        oracles/api_oracle.resource
 
 *** Variables ***
@@ -100,3 +101,15 @@ Open Deep Link
     ...                 current locale's wiki — this can reach any of them.
     [Arguments]    ${url}
     Execute Script    mobile: deepLink    url=${url}    package=${APP_PACKAGE}
+
+Restart App Cold
+    [Documentation]    Kills the app process and relaunches it.
+    ...    Uses force-stop rather than a graceful close, which makes the
+    ...    durability claim stronger: a killed process gets no chance to flush
+    ...    anything, so whatever survives was genuinely on disk already.
+    ...    Onboarding prompts can reappear on relaunch, so callers must tolerate
+    ...    them the same way they do on a fresh session.
+    ${result}=    Run Process    adb    -s    ${DEVICE}    shell    am    force-stop    ${PKG}
+    ...    stderr=STDOUT
+    Should Be Equal As Integers    ${result.rc}    0    msg=${result.stdout}
+    Activate Application    ${PKG}

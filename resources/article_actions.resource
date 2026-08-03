@@ -77,6 +77,7 @@ Remove Article From List
     ...    Un-saving is not a second tap on Save: that tap opens a context menu
     ...    and the removal lives inside it. Used as teardown so the next test
     ...    starts unsaved.
+    Wait Until Page Contains Element    ${SAVE_ARTICLE_BUTTON}
     Click Element                       ${SAVE_ARTICLE_BUTTON}
     Wait Until Page Contains Element    ${REMOVE_FROM_LIST_BUTTON}
     Click Element                       ${REMOVE_FROM_LIST_BUTTON}
