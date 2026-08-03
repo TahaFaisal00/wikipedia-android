@@ -14,6 +14,8 @@ ${SKIP_ARROW}       android=new UiSelector().className("android.widget.Button")
 ${SKIP_BUTTON}      android=new UiSelector().className("android.widget.Button").instance(0)
 
 ${MAIN_SCREEN_ANCHOR}       android=new UiSelector().className("android.view.View").instance(2)
+
+${HOME_SURVEY_CANCEL_BUTTON}    id=org.wikipedia.alpha:id/cancelButton
 *** Keywords ***
 Open Wikipedia
     [Documentation]         Starts a session with a clean app state (noReset=false).
@@ -60,6 +62,7 @@ Restart App Process
     ...                Suite Setup already consumed.
     Execute Script    mobile: terminateApp    appId=${APP_PACKAGE}
     Execute Script    mobile: activateApp     appId=${APP_PACKAGE}
+    Dismiss Home Survey If Present
     Wait Until Page Contains Element    ${MAIN_SCREEN_ANCHOR}
 
 Skip Tutorial
@@ -70,6 +73,21 @@ Skip Tutorial
     END
     Wait Until Element Is Visible    ${SKIP_BUTTON}
     Click Element    ${SKIP_BUTTON}
+
+Dismiss Home Survey If Present
+    [Documentation]     The "Help improve Home" survey fires on some launch cadence, so
+    ...                 it only surfaces during whole-suite runs and lands on whichever
+    ...                 test is unlucky. Conditional because the dialog is genuinely
+    ...                 nondeterministic — and safe to make conditional because no test
+    ...                 asserts anything about it, so a silent no-op hides nothing.
+    ...                 Mitigation, not a fix: the deterministic answer is suppressing
+    ...                 the dialog at its trigger.
+    ${present}=     Run Keyword And Return Status
+    ...             Page Should Contain Element    ${HOME_SURVEY_CANCEL_BUTTON}
+    IF    ${present}
+        Click Element    ${HOME_SURVEY_CANCEL_BUTTON}
+        Wait Until Page Does Not Contain Element    ${HOME_SURVEY_CANCEL_BUTTON}        2s
+    END
 
 Return To Native Context
     [Documentation]    Teardown safety net — get back to NATIVE_APP so a test that
