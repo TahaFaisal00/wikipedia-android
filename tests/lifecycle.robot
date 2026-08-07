@@ -7,7 +7,7 @@ Suite Setup    Run Keywords    app.Start Session
 ...            AND    search_actions.Navigate To Search Page
 ...            AND    search_actions.Dismiss Faster Way To Search Tip If Present
 Suite Teardown          Close Application
-
+Library             AppiumLibrary
 *** Test Cases ***
 Article Survives Backgrounding And Returning
     [Documentation]    Control case for the process-death tests —
@@ -35,4 +35,25 @@ Article Survives Process Death With Don't Keep Activities
     device.Enable Do Not Keep Activities
     app.Background App And Return    ${5}
     article_actions.Verify Article Title Is   ${HIST1H1B_ARTICLE_TITLE}     ${HIST1H1B_ARTICLE_NAME}
-    [Teardown]    device.Disable Do Not Keep Activities
+
+Expanded Section And Reading Position Are Lost After Recreation
+    [Documentation]    Bug-locked — a RED here means it was fixed.
+    ...    One defect, two manifestations: the section collapses, and the anchor inside it takes the scroll position with it.
+    [Tags]    lifecycle    oracle-ui    bug-locked
+    [Setup]    search_actions.Reset To Search Page
+    [Teardown]    Run Keyword And Ignore Error    app.Return To Native Context
+    search_actions.Dismiss Faster Way To Search Tip If Present
+    search_actions.Search For Article    ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Open Searched Article    ${HIST1H1B_ARTICLE_NAME}
+    article_actions.Dismiss Games Promo If Present
+    article_actions.Expand Article Section    ${REFERENCES_SECTION_ID}
+    ${height_before}=    article_actions.Get Article Section Height    ${REFERENCES_SECTION_ID}
+    Should Be True    ${height_before} > 0
+    article_actions.Scroll To End Of Article Section    ${REFERENCES_SECTION_ID}
+    ${position_before}=    article_actions.Get Article Scroll Position
+    Should Be True    ${position_before} > 0
+    app.Kill App Process
+    ${height_after}=    article_actions.Get Article Section Height    ${REFERENCES_SECTION_ID}
+    Should Be Equal As Integers    ${height_after}    0
+    ${position_after}=    article_actions.Get Article Scroll Position
+    Should Be Equal As Integers    ${position_after}    0

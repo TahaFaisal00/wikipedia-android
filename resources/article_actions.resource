@@ -134,3 +134,37 @@ Verify Article Title Is
     [Arguments]   ${actial_article}         ${expected_title}
     Wait Until Page Contains Element     ${actial_article}
     Element Should Contain Text     ${actial_article}    ${expected_title}
+
+Expand Article Section
+    [Documentation]    Clicks the section header, firing the app's own toggle handler.
+    [Arguments]    ${section_id}
+    ${locator}=    Format String    ${ARTICLE_SECTION_HEADER}    ${section_id}
+    app.Switch To Article WebView
+    Click Element    ${locator}
+    app.Return To Native Context
+
+
+Get Article Section Height
+    [Documentation]    Rendered height of the section body — 0 while collapsed. JS, since the library's visibility check misreports in WebView.
+    [Arguments]    ${section_id}
+    ${element_id}=    Format String    ${ARTICLE_SECTION_CONTENT_ID}    ${section_id}
+    app.Switch To Article WebView
+    ${height}=    Execute Script    script=var e=document.getElementById('${element_id}'); return e ? e.offsetHeight : -1;
+    app.Return To Native Context
+    RETURN    ${height}
+
+Scroll To End Of Article Section
+    [Documentation]    Scrolls until the section's bottom edge is in view. JS, since WebDriver has no scrollIntoView.
+    [Arguments]    ${section_id}
+    ${element_id}=    Format String    ${ARTICLE_SECTION_CONTENT_ID}    ${section_id}
+    app.Switch To Article WebView
+    Execute Script    script=document.getElementById('${element_id}').scrollIntoView(false); return true;
+    app.Return To Native Context
+
+Get Article Scroll Position
+    [Documentation]    Returns the page scroll offset in pixels. JS, since WebDriver has no page-scroll concept.
+    app.Switch To Article WebView
+    ${position}=    Execute Script    script=return Math.round(window.scrollY);
+    app.Return To Native Context
+    RETURN    ${position}
+

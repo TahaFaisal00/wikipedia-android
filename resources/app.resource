@@ -90,6 +90,10 @@ Dismiss Home Survey If Present
         Wait Until Page Does Not Contain Element    ${HOME_SURVEY_CANCEL_BUTTON}        2s
     END
 
+Switch To Article WebView
+    [Documentation]    Re-resolves the WebView handle each call — recreation destroys the old one.
+    Switch To Context    WEBVIEW_org.wikipedia.alpha
+
 Return To Native Context
     [Documentation]    Teardown safety net — get back to NATIVE_APP so a test that
     ...                dies mid-WebView doesn't strand the next test in the DOM.
@@ -120,3 +124,10 @@ Background App And Return
     Background Application    ${seconds}
     Dismiss Home Survey If Present
 
+Kill App Process
+    [Documentation]    Real process death — the app is restored from the saved-instance Bundle on return.
+    Background Application    ${-1}
+    Execute Script    mobile: shell    command=am
+    ...    args=${{ ['kill','org.wikipedia.alpha'] }}
+    Activate Application    org.wikipedia.alpha
+    Dismiss Home Survey If Present

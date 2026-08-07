@@ -16,3 +16,6 @@ ${RETURN_BUTTON}                    accessibility_id=Navigate up
 
 ${ADD_TO_ANOTHER_LIST_MENU_ITEM}    android=new UiSelector().text("Add to another reading list")
 ${CREATE_NEW_LIST_BUTTON}           android=new UiSelector().text("Create new")
+
+${ARTICLE_SECTION_HEADER}     css=#pcs section[data-mw-section-id="{}"] .pcs-section-hideable-header
+${ARTICLE_SECTION_CONTENT_ID}    pcs-section-content-{}
