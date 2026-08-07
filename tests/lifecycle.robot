@@ -22,18 +22,17 @@ Article Survives Backgrounding And Returning
     app.Background App And Return    ${5}
     article_actions.Verify Article Title Is   ${HIST1H1B_ARTICLE_TITLE}     ${HIST1H1B_ARTICLE_NAME}
 
-Article Survives Process Death With Don't Keep Activities
-    [Documentation]     Paired with the backgrounding control — same steps, DKA on.
-    ...    The article intent survives recreation; section and scroll state do not (see bugs 1 and 2).
-    [Tags]      lifescycle     oracle-ui
-    [Setup]     search_actions.Reset To Search Page
+Article Survives Process Death
+    [Documentation]    Paired with the backgrounding control — same steps, real process death.
+    ...    The article itself is restored; section and scroll state are not (see test 3).
+    [Tags]    lifecycle    oracle-ui
+    [Setup]    search_actions.Reset To Search Page
     search_actions.Dismiss Faster Way To Search Tip If Present
-    search_actions.Search For Article       ${HIST1H1B_ARTICLE_NAME}
-    search_actions.Verify Search List Shows Article        ${HIST1H1B_ARTICLE_NAME}
-    search_actions.Open Searched Article        ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Search For Article    ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Verify Search List Shows Article    ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Open Searched Article    ${HIST1H1B_ARTICLE_NAME}
     article_actions.Dismiss Games Promo If Present
-    device.Enable Do Not Keep Activities
-    app.Background App And Return    ${5}
+    app.Kill App Process
     article_actions.Verify Article Title Is   ${HIST1H1B_ARTICLE_TITLE}     ${HIST1H1B_ARTICLE_NAME}
 
 Expanded Section And Reading Position Are Lost After Recreation
@@ -41,7 +40,6 @@ Expanded Section And Reading Position Are Lost After Recreation
     ...    One defect, two manifestations: the section collapses, and the anchor inside it takes the scroll position with it.
     [Tags]    lifecycle    oracle-ui    bug-locked
     [Setup]    search_actions.Reset To Search Page
-    [Teardown]    Run Keyword And Ignore Error    app.Return To Native Context
     search_actions.Dismiss Faster Way To Search Tip If Present
     search_actions.Search For Article    ${HIST1H1B_ARTICLE_NAME}
     search_actions.Open Searched Article    ${HIST1H1B_ARTICLE_NAME}
@@ -57,3 +55,4 @@ Expanded Section And Reading Position Are Lost After Recreation
     Should Be Equal As Integers    ${height_after}    0
     ${position_after}=    article_actions.Get Article Scroll Position
     Should Be Equal As Integers    ${position_after}    0
+    [Teardown]    Run Keyword And Ignore Error    app.Return To Native Context
