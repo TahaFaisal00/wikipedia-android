@@ -113,3 +113,10 @@ Restart App Cold
     ...    stderr=STDOUT
     Should Be Equal As Integers    ${result.rc}    0    msg=${result.stdout}
     Activate Application    ${PKG}
+
+Background App And Return
+    [Documentation]    Backgrounds the app for ${seconds}, then clears anything that fires on resume.
+    [Arguments]    ${seconds}=${5}
+    Background Application    ${seconds}
+    Dismiss Home Survey If Present
+

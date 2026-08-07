@@ -128,3 +128,9 @@ Add Article To New Reading List
     Input Text                          ${LIST_NAME_FIELD}    ${list_name}
     Click Element                       ${ADD_TO_LIST_OK_BUTTON}
     Verify Snackbar Says                ${list_name}
+
+Verify Article Title Is
+    [Documentation]    Asserts the article header still shows the expected title.
+    [Arguments]   ${actial_article}         ${expected_title}
+    Wait Until Page Contains Element     ${actial_article}
+    Element Should Contain Text     ${actial_article}    ${expected_title}
