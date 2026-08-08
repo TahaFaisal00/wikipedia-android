@@ -2,13 +2,16 @@
 Resource        ../resources/app.resource
 Resource      ../resources/article_actions.resource
 Resource        ../resources/search_actions.resource
+Resource        ../resources/network.resource
 Resource        ../resources/device.resource
 Suite Setup    Run Keywords    app.Start Session
 ...            AND    search_actions.Navigate To Search Page
 ...            AND    search_actions.Dismiss Faster Way To Search Tip If Present
 Suite Teardown          Close Application
 Library             AppiumLibrary
+
 *** Test Cases ***
+
 Article Survives Backgrounding And Returning
     [Documentation]    Control case for the process-death tests —
     ...                plain background/resume must not lose the article.
@@ -56,3 +59,18 @@ Expanded Section And Reading Position Are Lost After Recreation
     ${position_after}=    article_actions.Get Article Scroll Position
     Should Be Equal As Integers    ${position_after}    0
     [Teardown]    Run Keyword And Ignore Error    app.Return To Native Context
+
+Search Results Are Refetched Instead Of Restored After Recreation
+    [Documentation]    Bug-locked — a RED here means it was fixed. See BUGS.md #2.
+    ...    Results are re-queried on activity recreation instead of restored, so with the network down they vanish.
+    [Tags]    lifecycle    oracle-ui    bug-locked
+    [Setup]    Run Keywords    device.Enable Do Not Keep Activities
+    ...    AND                 search_actions.Reset To Search Page
+    search_actions.Dismiss Faster Way To Search Tip If Present
+    search_actions.Search For Article    ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Verify Search List Shows Article    ${HIST1H1B_ARTICLE_NAME}
+    network.Disable Network
+    app.Background App And Return    ${5}
+    search_actions.Verify Search List Does Not Show Article    ${HIST1H1B_ARTICLE_NAME}
+    [Teardown]    Run Keywords    network.Enable Network
+    ...    AND    device.Disable Do Not Keep Activities

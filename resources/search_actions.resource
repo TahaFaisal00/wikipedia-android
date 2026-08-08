@@ -76,6 +76,14 @@ Verify Search List Shows No Article
     ...                language, all with identical text, so this matches any.
     Wait Until Page Contains Element    ${NO_RESULTS_MESSAGE}
 
+Verify Search List Does Not Show Article
+    [Documentation]    Asserts the article is absent from the results list.
+    ...    Deliberately does not assert which screen replaced it — the empty state,
+    ...    an error screen, and a blank list all satisfy the claim.
+    [Arguments]    ${article_name}
+    ${locator}=    Format String    ${SEARCH_RESULT_ARTICLE_TITLE}    ${article_name}
+    Page Should Not Contain Element    ${locator}
+
 Clear Search Field
     [Documentation]    Taps the clear button to empty the search field.
     Wait Until Page Contains Element    ${CLEAR_QUERY_BUTTON}
