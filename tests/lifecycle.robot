@@ -39,9 +39,9 @@ Article Survives Process Death
     article_actions.Verify Article Title Is   ${HIST1H1B_ARTICLE_TITLE}     ${HIST1H1B_ARTICLE_NAME}
 
 Expanded Section And Reading Position Are Lost After Recreation
-    [Documentation]    Bug-locked — a RED here means it was fixed.
+    [Documentation]    Bug — a RED here means it was fixed.
     ...    One defect, two manifestations: the section collapses, and the anchor inside it takes the scroll position with it.
-    [Tags]    lifecycle    oracle-ui    bug-locked
+    [Tags]    lifecycle    oracle-ui    bug
     [Setup]    search_actions.Reset To Search Page
     search_actions.Dismiss Faster Way To Search Tip If Present
     search_actions.Search For Article    ${HIST1H1B_ARTICLE_NAME}
@@ -61,9 +61,9 @@ Expanded Section And Reading Position Are Lost After Recreation
     [Teardown]    Run Keyword And Ignore Error    app.Return To Native Context
 
 Search Results Are Refetched Instead Of Restored After Recreation
-    [Documentation]    Bug-locked — a RED here means it was fixed. See BUGS.md #2.
+    [Documentation]    Bug — a RED here means it was fixed. See BUGS.md #2.
     ...    Results are re-queried on activity recreation instead of restored, so with the network down they vanish.
-    [Tags]    lifecycle    oracle-ui    bug-locked
+    [Tags]    lifecycle    oracle-ui    bug
     [Setup]    Run Keywords    device.Enable Do Not Keep Activities
     ...    AND                 search_actions.Reset To Search Page
     search_actions.Dismiss Faster Way To Search Tip If Present
@@ -74,3 +74,12 @@ Search Results Are Refetched Instead Of Restored After Recreation
     search_actions.Verify Search List Does Not Show Article    ${HIST1H1B_ARTICLE_NAME}
     [Teardown]    Run Keywords    network.Enable Network
     ...    AND    device.Disable Do Not Keep Activities
+
+Selected Bottom Nav Tab Survives Process Death
+    [Documentation]    Regression guard — the selected tab is restored, unlike section and scroll state.
+    [Tags]    lifecycle    oracle-ui
+    [Setup]    search_actions.Reset To Search Page
+    search_actions.Navigate To Saved Page
+    article_actions.Verify Bottom Nav Tab Is Selected    ${SAVED_BAR}
+    app.Kill App Process
+    article_actions.Verify Bottom Nav Tab Is Selected    ${SAVED_BAR}

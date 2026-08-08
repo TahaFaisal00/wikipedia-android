@@ -168,3 +168,8 @@ Get Article Scroll Position
     app.Return To Native Context
     RETURN    ${position}
 
+Verify Bottom Nav Tab Is Selected
+    [Documentation]    Reads the selected attribute — every tab is always on screen, so presence proves nothing.
+    [Arguments]    ${tab_locator}
+    ${selected}=    Get Element Attribute    ${tab_locator}    selected
+    Should Be Equal    ${selected}    true

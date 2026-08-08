@@ -76,7 +76,7 @@ Saved Article Is Readable With The Network Off
     ${expected}=     api_oracle.Get Expected Article Extract        ${HIST1H1B_ARTICLE_NAME}
     article_actions.Navigate Back To Search Page
     network.Disable Network
-    search_actions.Navigate From Search Page To Saved Page
+    search_actions.Navigate To Saved Page
     reading_list_actions.Open Default Saved List
     reading_list_actions.Open Saved Article          ${HIST1H1B_ARTICLE_NAME}
     article_actions.Verify UI Paragraph Matches Extract   ${expected}

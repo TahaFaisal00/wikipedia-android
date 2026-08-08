@@ -97,7 +97,7 @@ Verify Recent Searches Shows Article
     ${recent_searched_article_title}=       Format String    ${SEARCH_RESULT_ARTICLE_TITLE}          ${article_name}
     Wait Until Page Contains Element    ${recent_searched_article_title}
 
-Navigate From Search Page To Saved Page
+Navigate To Saved Page
     [Documentation]    Moves to the Saved screen via the bottom navigation bar.
     Wait Until Page Contains Element    ${SAVED_BAR}
     Click Element                       ${SAVED_BAR}
