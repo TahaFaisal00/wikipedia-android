@@ -1,5 +1,6 @@
 *** Settings ***
 Library         AppiumLibrary
+Library    String
 Resource        ../pages/device_settings_page.resource
 
 *** Keywords ***
@@ -28,3 +29,28 @@ Disable Do Not Keep Activities
     ...    args=${{ ['get','global','always_finish_activities'] }}
     Should Be Equal    ${value.strip()}    0
     Activate Application    org.wikipedia.alpha
+
+Grant Location Permission
+    [Documentation]    Grants fine location without touching the app. Coarse stays denied;
+    ...    the bug reproduces with fine alone.
+    Execute Script    mobile: shell    command=pm
+    ...    args=${{ ['grant','org.wikipedia.alpha','android.permission.ACCESS_FINE_LOCATION'] }}
+
+Revoke Location Permission
+    [Documentation]    Revokes fine location. Android kills the app process when a granted
+    ...    permission is revoked, so the app must be relaunched after this.
+    Execute Script    mobile: shell    command=pm
+    ...    args=${{ ['revoke','org.wikipedia.alpha','android.permission.ACCESS_FINE_LOCATION'] }}
+
+Verify App Is Requesting Location
+    [Documentation]    Asserts the app holds an active gps request. This is the real signal —
+    ...    the map is a SurfaceView, so a working locate-me is invisible to Appium.
+    ${output}=    Execute Script    mobile: shell    command=dumpsys    args=${{ ['location'] }}
+    ${lines}=    Get Lines Containing String   ${output}    gps: org.wikipedia.alpha
+    Should Contain    ${lines}    Currently active
+
+Verify App Is Not Requesting Location
+    [Documentation]    Asserts the app holds no active gps request.
+    ${output}=    Execute Script    mobile: shell    command=dumpsys    args=${{ ['location'] }}
+    ${lines}=    Get Lines Containing String    ${output}    gps: org.wikipedia.alpha
+    Should Not Contain    ${lines}    Currently active

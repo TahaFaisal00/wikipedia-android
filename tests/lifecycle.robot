@@ -4,6 +4,7 @@ Resource      ../resources/article_actions.resource
 Resource        ../resources/search_actions.resource
 Resource        ../resources/network.resource
 Resource        ../resources/device.resource
+Resource        ../resources/places_actions.resource
 Suite Setup    Run Keywords    app.Start Session
 ...            AND    search_actions.Navigate To Search Page
 ...            AND    search_actions.Dismiss Faster Way To Search Tip If Present
@@ -61,7 +62,7 @@ Expanded Section And Reading Position Are Lost After Recreation
     [Teardown]    Run Keyword And Ignore Error    app.Return To Native Context
 
 Search Results Are Refetched Instead Of Restored After Recreation
-    [Documentation]    Bug — a RED here means it was fixed. See BUGS.md #2.
+    [Documentation]    Bug — a RED here means it was fixed.
     ...    Results are re-queried on activity recreation instead of restored, so with the network down they vanish.
     [Tags]    lifecycle    oracle-ui    bug
     [Setup]    Run Keywords    device.Enable Do Not Keep Activities
@@ -74,6 +75,25 @@ Search Results Are Refetched Instead Of Restored After Recreation
     search_actions.Verify Search List Does Not Show Article    ${HIST1H1B_ARTICLE_NAME}
     [Teardown]    Run Keywords    network.Enable Network
     ...    AND    device.Disable Do Not Keep Activities
+
+Location Permission Does Not Take Effect Until The Places Screen Is Recreated
+    [Documentation]    Bug — a RED here means it was fixed.
+    ...    Granting while the screen is open leaves the app with no location request at all;
+    ...    only re-entering the screen registers one.
+    [Tags]    lifecycle    oracle-device    bug
+    [Setup]    Run Keywords    device.Revoke Location Permission
+    ...    AND    search_actions.Reset To Search Page
+    [Teardown]    device.Revoke Location Permission
+    Set Location    33.3152    44.3661    ${0}
+    places_actions.Open Places Screen
+    places_actions.Deny Location Permission If Prompted
+    places_actions.Verify Places Screen Loaded
+    device.Grant Location Permission
+    places_actions.Tap Locate Me
+    device.Verify App Is Not Requesting Location
+    places_actions.Leave And Reopen Places Screen
+    places_actions.Tap Locate Me
+    Wait Until Keyword Succeeds    10s    1s    device.Verify App Is Requesting Location
 
 Selected Bottom Nav Tab Survives Process Death
     [Documentation]    Regression guard — the selected tab is restored, unlike section and scroll state.
