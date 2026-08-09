@@ -20,13 +20,14 @@ Navigate To Search Page
     Click Element    ${SEARCH_BAR}
 
 Dismiss Faster Way To Search Tip If Present
-    [Documentation]    Closes the "faster way to search" tip if it is showing.
-    ...    The tip is one-shot session state: it appears once and never again,
-    ...    so a hard wait would fail on every test after the first.
-    ...    Uses Page Should Contain Element rather than a Wait, so an absent tip
-    ...    costs no timeout.
+    [Documentation]    Closes the "faster way to search" tip if it shows.
+    ...    Waits rather than checking instantly — the tip renders a beat after the
+    ...    screen does, so an instant check reports absent and leaves it on screen.
+    ...    Wrapped in Run Keyword And Return Status so an absent tip costs the
+    ...    timeout instead of failing.
     ${present}=    Run Keyword And Return Status
-    ...    Page Should Contain Element    ${FASTER_WAY_TO_SEARCH_WINDOW_CLOSE_BUTTON}
+    ...    Wait Until Page Contains Element
+    ...    ${FASTER_WAY_TO_SEARCH_WINDOW_CLOSE_BUTTON}    timeout=3s
     IF    ${present}
         Click Element    ${FASTER_WAY_TO_SEARCH_WINDOW_CLOSE_BUTTON}
     END
