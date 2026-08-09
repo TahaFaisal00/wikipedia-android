@@ -14,13 +14,19 @@ Normalize Article Text
     ${text}=    Strip String    ${text}
     RETURN    ${text}
 
+Open Article WebView
+    [Documentation]    Switches to the WebView and waits for the article body to render.
+    ...    The context can exist before the page has content, so both waits are needed.
+    app.Switch To Article WebView
+    Wait Until Page Contains Element    ${ARTICLE_BODY_TEXT_LOCATOR}
+
 Read Article Body Text
     [Documentation]     Switch to WebView, read the first paragraph, clean out the
     ...                [1] refs and extra spaces, switch back to Native.
-    Switch To Context    WEBVIEW_org.wikipedia.alpha
+    Open Article WebView
     ${raw_body}=        Get Text    ${ARTICLE_BODY_TEXT_LOCATOR}
     ${clean_body}=      Normalize Article Text      ${raw_body}
-    Switch To Context    NATIVE_APP
+    Return To Native Context
     RETURN      ${clean_body}
 
 Dismiss Games Promo If Present
@@ -49,11 +55,11 @@ Verify Article Content Direction
     ...                 mirrored Arabic app, and that is correct behavior, not a defect.
     ...                 switch back to Native.
     [Arguments]    ${expected}
-    Switch To Context    WEBVIEW_org.wikipedia.alpha
+    Open Article WebView
     ${direction}=    Execute Script
     ...    return getComputedStyle(document.querySelector('p')).direction
     Should Be Equal    ${direction}    ${expected}
-    Switch To Context    NATIVE_APP
+    Return To Native Context
 
 Save Article
     [Documentation]     Taps Save on an UNSAVED article.
@@ -139,7 +145,7 @@ Expand Article Section
     [Documentation]    Clicks the section header, firing the app's own toggle handler.
     [Arguments]    ${section_id}
     ${locator}=    Format String    ${ARTICLE_SECTION_HEADER}    ${section_id}
-    app.Switch To Article WebView
+    Open Article WebView
     Click Element    ${locator}
     app.Return To Native Context
 
@@ -148,7 +154,7 @@ Get Article Section Height
     [Documentation]    Rendered height of the section body — 0 while collapsed. JS, since the library's visibility check misreports in WebView.
     [Arguments]    ${section_id}
     ${element_id}=    Format String    ${ARTICLE_SECTION_CONTENT_ID}    ${section_id}
-    app.Switch To Article WebView
+    Open Article WebView
     ${height}=    Execute Script    script=var e=document.getElementById('${element_id}'); return e ? e.offsetHeight : -1;
     app.Return To Native Context
     RETURN    ${height}
@@ -157,13 +163,13 @@ Scroll To End Of Article Section
     [Documentation]    Scrolls until the section's bottom edge is in view. JS, since WebDriver has no scrollIntoView.
     [Arguments]    ${section_id}
     ${element_id}=    Format String    ${ARTICLE_SECTION_CONTENT_ID}    ${section_id}
-    app.Switch To Article WebView
+    Open Article WebView
     Execute Script    script=document.getElementById('${element_id}').scrollIntoView(false); return true;
     app.Return To Native Context
 
 Get Article Scroll Position
     [Documentation]    Returns the page scroll offset in pixels. JS, since WebDriver has no page-scroll concept.
-    app.Switch To Article WebView
+    Open Article WebView
     ${position}=    Execute Script    script=return Math.round(window.scrollY);
     app.Return To Native Context
     RETURN    ${position}

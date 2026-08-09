@@ -17,6 +17,8 @@ ${SKIP_BUTTON}      android=new UiSelector().className("android.widget.Button").
 ${MAIN_SCREEN_ANCHOR}       android=new UiSelector().className("android.view.View").instance(2)
 
 ${HOME_SURVEY_CANCEL_BUTTON}    id=org.wikipedia.alpha:id/cancelButton
+
+${ARTICLE_WEBVIEW_CONTEXT}    WEBVIEW_org.wikipedia.alpha
 *** Keywords ***
 Open Wikipedia
     [Documentation]         Starts a session with a clean app state (noReset=false).
@@ -91,8 +93,10 @@ Dismiss Home Survey If Present
     END
 
 Switch To Article WebView
-    [Documentation]    Re-resolves the WebView handle each call — recreation destroys the old one.
-    Switch To Context    WEBVIEW_org.wikipedia.alpha
+    [Documentation]    Retries until the WebView context exists — it is created asynchronously,
+    ...    and Switch To Context throws instantly rather than waiting.
+    Wait Until Keyword Succeeds    15s    1s
+    ...    Switch To Context    ${ARTICLE_WEBVIEW_CONTEXT}
 
 Return To Native Context
     [Documentation]    Teardown safety net — get back to NATIVE_APP so a test that
