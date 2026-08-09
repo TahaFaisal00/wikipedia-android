@@ -22,7 +22,7 @@ Arabic Article Content Renders In Arabic Script
     [Setup]             app.Restart App Process
     search_actions.Navigate To Search Page
     search_actions.Search For Article    ${ARABIC_BAGHDAD_ARTICLE_NAME}
-    search_actions.Open Searched Article    ${ARABIC_BAGHDAD_ARTICLE_NAME}
+    search_actions.Open First Search Result
     article_actions.Dismiss Games Promo If Present
     article_actions.Verify Article Page Loaded    ${ARABIC_BAGHDAD_ARTICLE_TITLE}
     article_actions.Verify UI Paragraph Matches API Paragraph    ${ARABIC_BAGHDAD_ARTICLE_NAME}

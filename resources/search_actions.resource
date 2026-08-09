@@ -43,9 +43,8 @@ Use Search Bar
     Wait Until Page Contains Element        ${SEARCH_FIELD}
     Input Text    ${SEARCH_FIELD}    ${article_name}
 
-Open Searched Article
-    [Documentation]     Check the article is in the results, then open it.
-    [Arguments]     ${article_name}
+Open First Search Result
+    [Documentation]    Opens the top row of the results list.
     Wait Until Page Contains Element    ${FIRST_RESULT_ARTICLE}
     Click Element    ${FIRST_RESULT_ARTICLE}
 

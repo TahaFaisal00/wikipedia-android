@@ -23,7 +23,7 @@ Saving An Article Offline Persists A Correct Row
     search_actions.Dismiss Faster Way To Search Tip If Present
     search_actions.Search For Article       ${HIST1H1B_ARTICLE_NAME}
     search_actions.Verify Search List Shows Article        ${HIST1H1B_ARTICLE_NAME}
-    search_actions.Open Searched Article        ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Open First Search Result
     article_actions.Dismiss Games Promo If Present
     article_actions.Save Article
     article_actions.Verify Snackbar Says             ${SAVED_SNACKBAR_TEXT}
@@ -43,7 +43,7 @@ Removing A Saved Article Deletes Its Row
     search_actions.Dismiss Faster Way To Search Tip If Present
     search_actions.Search For Article       ${HIST1H1B_ARTICLE_NAME}
     search_actions.Verify Search List Shows Article        ${HIST1H1B_ARTICLE_NAME}
-    search_actions.Open Searched Article        ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Open First Search Result
     article_actions.Dismiss Games Promo If Present
     article_actions.Save Article
     article_actions.Verify Snackbar Says             ${SAVED_SNACKBAR_TEXT}
@@ -68,7 +68,7 @@ Saved Article Is Readable With The Network Off
     ...         AND                 db_oracle.Wait Until Article Is Not Saved     ${HIST1H1B_ARTICLE_NAME}
     search_actions.Dismiss Faster Way To Search Tip If Present
     search_actions.Search For Article                ${HIST1H1B_ARTICLE_NAME}
-    search_actions.Open Searched Article             ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Open First Search Result
     article_actions.Dismiss Games Promo If Present
     article_actions.Save Article
     article_actions.Verify Snackbar Says             ${SAVED_SNACKBAR_TEXT}
@@ -96,14 +96,14 @@ Saved Articles Survive An App Restart
     ...         AND                 db_oracle.Wait Until Article Is Not Saved    ${HIST1H1B_ARTICLE_NAME}
     search_actions.Dismiss Faster Way To Search Tip If Present
     search_actions.Search For Article                ${HIST1H1B_ARTICLE_NAME}
-    search_actions.Open Searched Article             ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Open First Search Result
     article_actions.Dismiss Games Promo If Present
     article_actions.Save Article
     article_actions.Verify Snackbar Says             ${SAVED_SNACKBAR_TEXT}
     db_oracle.Wait Until Saved Article Row Is Correct    ${HIST1H1B_ARTICLE_NAME}
     app.Restart App Cold
     search_actions.Dismiss Faster Way To Search Tip If Present
-    search_actions.Navigate From Search Page To Saved Page
+    search_actions.Navigate To Saved Page
     reading_list_actions.Open Default Saved List
     reading_list_actions.Verify Saved Article Is Listed    ${HIST1H1B_ARTICLE_NAME}
     db_oracle.Wait Until Saved Article Row Is Correct    ${HIST1H1B_ARTICLE_NAME}
@@ -123,13 +123,13 @@ Adding A Saved Article To A New Reading List Persists The List
     [Tags]      offline    oracle-db
     [Setup]     Run Keywords          search_actions.Reset To Search Page
     ...        AND      search_actions.Dismiss Faster Way To Search Tip If Present
-    ...        AND    search_actions.Navigate From Search Page To Saved Page
+    ...        AND    search_actions.Navigate To Saved Page
     ...        AND    reading_list_actions.Ensure Reading List Does Not Exist    ${CUSTOM_LIST_NAME}
     ...        AND    search_actions.Reset To Search Page
     ...        AND    db_oracle.Wait Until Article Is Not Saved   ${HIST1H1B_ARTICLE_NAME}
     search_actions.Dismiss Faster Way To Search Tip If Present
     search_actions.Search For Article                ${HIST1H1B_ARTICLE_NAME}
-    search_actions.Open Searched Article             ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Open First Search Result
     article_actions.Dismiss Games Promo If Present
     article_actions.Save Article
     article_actions.Verify Snackbar Says             ${SAVED_SNACKBAR_TEXT}

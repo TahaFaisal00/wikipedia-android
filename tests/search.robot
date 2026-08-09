@@ -23,7 +23,7 @@ Search Returns The Requested Article
     [Setup]     search_actions.Reset To Search Page
     search_actions.Search For Article       ${HIST1H1B_ARTICLE_NAME}
     search_actions.Verify Search List Shows Article        ${HIST1H1B_ARTICLE_NAME}
-    search_actions.Open Searched Article        ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Open First Search Result
     article_actions.Dismiss Games Promo If Present
     article_actions.Verify Article Page Loaded    ${HIST1H1B_ARTICLE_TITLE}
     article_actions.Verify UI Paragraph Matches API Paragraph        ${HIST1H1B_ARTICLE_NAME}

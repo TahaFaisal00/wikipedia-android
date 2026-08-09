@@ -21,7 +21,7 @@ Article Survives Backgrounding And Returning
     search_actions.Dismiss Faster Way To Search Tip If Present
     search_actions.Search For Article       ${HIST1H1B_ARTICLE_NAME}
     search_actions.Verify Search List Shows Article        ${HIST1H1B_ARTICLE_NAME}
-    search_actions.Open Searched Article        ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Open First Search Result
     article_actions.Dismiss Games Promo If Present
     app.Background App And Return    ${5}
     article_actions.Verify Article Title Is   ${HIST1H1B_ARTICLE_TITLE}     ${HIST1H1B_ARTICLE_NAME}
@@ -34,7 +34,7 @@ Article Survives Process Death
     search_actions.Dismiss Faster Way To Search Tip If Present
     search_actions.Search For Article    ${HIST1H1B_ARTICLE_NAME}
     search_actions.Verify Search List Shows Article    ${HIST1H1B_ARTICLE_NAME}
-    search_actions.Open Searched Article    ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Open First Search Result
     article_actions.Dismiss Games Promo If Present
     app.Kill App Process
     article_actions.Verify Article Title Is   ${HIST1H1B_ARTICLE_TITLE}     ${HIST1H1B_ARTICLE_NAME}
@@ -46,7 +46,7 @@ Expanded Section And Reading Position Are Lost After Recreation
     [Setup]    search_actions.Reset To Search Page
     search_actions.Dismiss Faster Way To Search Tip If Present
     search_actions.Search For Article    ${HIST1H1B_ARTICLE_NAME}
-    search_actions.Open Searched Article    ${HIST1H1B_ARTICLE_NAME}
+    search_actions.Open First Search Result
     article_actions.Dismiss Games Promo If Present
     article_actions.Expand Article Section    ${REFERENCES_SECTION_ID}
     ${height_before}=    article_actions.Get Article Section Height    ${REFERENCES_SECTION_ID}
