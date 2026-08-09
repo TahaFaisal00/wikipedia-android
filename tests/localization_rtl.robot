@@ -11,6 +11,7 @@ Suite Setup            Run Keywords      app.Start Session     ar  EG  ${WIKI_AR
 Suite Teardown          Close Application
 
 *** Test Cases ***
+
 Arabic Article Content Renders In Arabic Script
     [Documentation]     Opens an Arabic article and asserts its first paragraph matches
     ...                 the AR API extract, and that the WebView renders it right to left.

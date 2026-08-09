@@ -14,7 +14,7 @@ ${APP_ACTIVITY}                 org.wikipedia.DefaultIcon
 ${SKIP_ARROW}       android=new UiSelector().className("android.widget.Button")
 ${SKIP_BUTTON}      android=new UiSelector().className("android.widget.Button").instance(0)
 
-${MAIN_SCREEN_ANCHOR}       android=new UiSelector().className("android.view.View").instance(2)
+${MAIN_SCREEN_ANCHOR}    android=new UiSelector().resourceId("org.wikipedia.alpha:id/nav_tab_home")
 
 ${HOME_SURVEY_CANCEL_BUTTON}    id=org.wikipedia.alpha:id/cancelButton
 
@@ -65,8 +65,24 @@ Restart App Process
     ...                Suite Setup already consumed.
     Execute Script    mobile: terminateApp    appId=${APP_PACKAGE}
     Execute Script    mobile: activateApp     appId=${APP_PACKAGE}
+    Wait Until Keyword Succeeds    20s    2s    Reach Main Screen
+
+Reach Main Screen
+    [Documentation]    One attempt at a clear main screen.
+    ...    The home survey fires on a launch cadence, not a timing you can wait out
+    ...    - it can arrive after a check reported it absent, so dismissal and the
+    ...    anchor check are retried as a pair.
+    ...    The back press is here because terminateApp does not clear the task:
+    ...    activateApp restores whatever screen the previous test abandoned, and an
+    ...    article screen carries no bottom navigation. One back per attempt unwinds
+    ...    the restored stack a level at a time until the main screen is on top.
     Dismiss Home Survey If Present
-    Wait Until Page Contains Element    ${MAIN_SCREEN_ANCHOR}
+    ${on_main}=    Run Keyword And Return Status
+    ...    Wait Until Page Contains Element    ${MAIN_SCREEN_ANCHOR}    timeout=5s
+    IF    not ${on_main}
+        Go Back
+        Wait Until Page Contains Element    ${MAIN_SCREEN_ANCHOR}    timeout=5s
+    END
 
 Skip Tutorial
     [Documentation]    Click through the 3 intro screens, then hit skip to reach the app.
@@ -115,12 +131,13 @@ Restart App Cold
     ...    Uses force-stop rather than a graceful close, which makes the
     ...    durability claim stronger: a killed process gets no chance to flush
     ...    anything, so whatever survives was genuinely on disk already.
-    ...    Onboarding prompts can reappear on relaunch, so callers must tolerate
-    ...    them the same way they do on a fresh session.
+    ...    The launch gate is retried rather than run once: the home survey fires
+    ...    on a launch cadence and can arrive after a check reported it absent.
     ${result}=    Run Process    adb    -s    ${DEVICE}    shell    am    force-stop    ${PKG}
     ...    stderr=STDOUT
     Should Be Equal As Integers    ${result.rc}    0    msg=${result.stdout}
     Activate Application    ${PKG}
+    Wait Until Keyword Succeeds    20s    2s    Reach Main Screen
 
 Background App And Return
     [Documentation]    Backgrounds the app for ${seconds}, then clears anything that fires on resume.
@@ -128,10 +145,48 @@ Background App And Return
     Background Application    ${seconds}
     Dismiss Home Survey If Present
 
+Get App Process Id
+    [Documentation]    Returns the app's PID, or an empty string when it is not running.
+    ...    Stripped because adb on Windows returns CRLF.
+    ${result}=    Run Process    adb    -s    ${DEVICE}    shell    pidof    ${PKG}
+    ...    stderr=STDOUT
+    RETURN    ${result.stdout.strip()}
+
+Kill Until Process Is Gone
+    [Documentation]    One attempt at killing the backgrounded process.
+    Run Process    adb    -s    ${DEVICE}    shell    am    kill    ${PKG}    stderr=STDOUT
+    ${pid}=    Get App Process Id
+    Should Be Empty    ${pid}    msg=Process still alive after am kill
+
 Kill App Process
-    [Documentation]    Real process death — the app is restored from the saved-instance Bundle on return.
+    [Documentation]    Real process death - verified, not assumed.
+    ...    `am kill` only kills a process the system already treats as cached, so a
+    ...    kill issued too soon after backgrounding is a silent no-op: the app
+    ...    survives and every piece of state survives with it, leaving the test to
+    ...    assert against a premise that never held.
+    ...    Retried until the PID is actually gone, then compared before and after.
+    ...    An unchanged PID means nothing was destroyed, which is a broken premise,
+    ...    not a failed claim - so it says so in its own message rather than letting
+    ...    the test report a state assertion it never earned the right to make.
+    ${pid_before}=    Get App Process Id
+    Should Not Be Empty    ${pid_before}    msg=App was not running before the kill
     Background Application    ${-1}
-    Execute Script    mobile: shell    command=am
-    ...    args=${{ ['kill','org.wikipedia.alpha'] }}
-    Activate Application    org.wikipedia.alpha
+    Wait Until Keyword Succeeds    20s    2s    Kill Until Process Is Gone
+    Activate Application    ${PKG}
     Dismiss Home Survey If Present
+    ${pid_after}=    Get App Process Id
+    Should Not Be Equal    ${pid_before}    ${pid_after}
+    ...    msg=Premise not met: process was never killed, PID unchanged at ${pid_before}
+
+Ensure Adb Root
+    [Documentation]    Root is a precondition for every database read - the app's
+    ...    databases directory is unreadable without it and the whole oracle
+    ...    collapses to "Permission denied".
+    ...    Root is adb-server state, not per-run state, so it survives some runs and
+    ...    not others. Asserting it at startup turns a confusing mid-suite cascade
+    ...    into one clear message before a single test has run.
+    Run Process    adb    -s    ${DEVICE}    root             stderr=STDOUT
+    Run Process    adb    -s    ${DEVICE}    wait-for-device  stderr=STDOUT
+    ${result}=    Run Process    adb    -s    ${DEVICE}    shell    id    stderr=STDOUT
+    Should Contain    ${result.stdout}    uid=0
+    ...    msg=adb is not root - the database oracle cannot read the app's database

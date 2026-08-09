@@ -105,6 +105,17 @@ Get Reading List Rows
     RETURN    ${rows}
     [Teardown]    Disconnect From Database
 
+Verify Reading List Does Not Exist
+    [Documentation]    Premise guard. Asserts no ReadingList row carries the name.
+    [Arguments]    ${list_title}
+    ${rows}=    Get Reading List Rows    ${list_title}
+    Should Be Empty    ${rows}
 
+Wait Until Reading List Does Not Exist
+    [Documentation]    Polls until the list row is gone. Deletion is asynchronous,
+    ...    same as article removal, so a single read can catch it mid-delete.
+    [Arguments]    ${list_title}
+    Wait Until Keyword Succeeds    30s    2s
+    ...    Verify Reading List Does Not Exist    ${list_title}
 
 

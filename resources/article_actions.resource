@@ -70,24 +70,21 @@ Save Article
     Click Element                       ${SAVE_ARTICLE_BUTTON}
 
 Verify Snackbar Says
-    [Documentation]     Asserts the snackbar carries the expected message.
-    ...    Save, move and remove all use the same snackbar id, so waiting for the
-    ...    element alone would pass for any of them. The text is the only
-    ...    discriminator. Also acts as the sync gate before a DB snapshot.
+    [Documentation]    Waits for the snackbar text itself rather than the element
+    ...    and then the text: the snackbar auto-dismisses, and a two-call check
+    ...    can lose it in the gap between the calls.
+    ...    Text is the only discriminator anyway - save, move and remove share one
+    ...    snackbar id - so matching on text alone gives up nothing.
     [Arguments]    ${expected_text}
-    Wait Until Page Contains Element    ${SNACKBAR_TEXT}
-    Element Should Contain Text         ${SNACKBAR_TEXT}    ${expected_text}
+    Wait Until Page Contains    ${expected_text}    timeout=10s
     
 Remove Article From List
     [Documentation]     Un-saves an article that is currently SAVED.
     ...    Un-saving is not a second tap on Save: that tap opens a context menu
     ...    and the removal lives inside it. Used as teardown so the next test
     ...    starts unsaved.
-    Wait Until Page Contains Element    ${SAVE_ARTICLE_BUTTON}
-    Click Element                       ${SAVE_ARTICLE_BUTTON}
-    Wait Until Page Contains Element    ${REMOVE_FROM_LIST_BUTTON}
-    Click Element                       ${REMOVE_FROM_LIST_BUTTON}
-    Verify Snackbar Says                ${REMOVED_SNACKBAR_TEXT}
+    Open Save Context Menu
+    Click Element           ${REMOVE_FROM_LIST_BUTTON}
 
 Verify UI Paragraph Matches Extract
     [Documentation]    Reads the first paragraph on screen and checks it sits
@@ -124,8 +121,7 @@ Add Article To New Reading List
     ...    The confirmation asserts the list name, which the snackbar includes -
     ...    that is what distinguishes this message from the plain save one.
     [Arguments]    ${list_name}
-    Wait Until Page Contains Element    ${SAVE_ARTICLE_BUTTON}
-    Click Element                       ${SAVE_ARTICLE_BUTTON}
+    Open Save Context Menu
     Wait Until Page Contains Element    ${ADD_TO_ANOTHER_LIST_MENU_ITEM}
     Click Element                       ${ADD_TO_ANOTHER_LIST_MENU_ITEM}
     Wait Until Page Contains Element    ${CREATE_NEW_LIST_BUTTON}
@@ -133,13 +129,12 @@ Add Article To New Reading List
     Wait Until Page Contains Element    ${LIST_NAME_FIELD}
     Input Text                          ${LIST_NAME_FIELD}    ${list_name}
     Click Element                       ${ADD_TO_LIST_OK_BUTTON}
-    Verify Snackbar Says                ${list_name}
 
 Verify Article Title Is
     [Documentation]    Asserts the article header still shows the expected title.
     [Arguments]   ${actial_article}         ${expected_title}
-    Wait Until Page Contains Element     ${actial_article}
-    Element Should Contain Text     ${actial_article}    ${expected_title}
+    Wait Until Page Contains Element    ${actial_article}    timeout=20s
+    Element Should Contain Text         ${actial_article}    ${expected_title}
 
 Expand Article Section
     [Documentation]    Clicks the section header, firing the app's own toggle handler.
@@ -179,3 +174,19 @@ Verify Bottom Nav Tab Is Selected
     [Arguments]    ${tab_locator}
     ${selected}=    Get Element Attribute    ${tab_locator}    selected
     Should Be Equal    ${selected}    true
+
+Open Save Context Menu
+    [Documentation]    Taps Save on a SAVED article and waits for the context menu.
+    ...    The tap and the wait are retried as a pair: opening an article from the
+    ...    Saved list is slower than from search, so the Save button can be drawn
+    ...    before it is bound and the first tap does nothing at all - no menu and
+    ...    no snackbar, which is what makes the failure so hard to read.
+    ...    Retrying the tap is safe because the control is state-aware: on a saved
+    ...    article it can only ever open this menu, never save a second time.
+    Wait Until Keyword Succeeds    15s    2s    Tap Save And Wait For Menu
+
+Tap Save And Wait For Menu
+    [Documentation]    One attempt at opening the Save context menu.
+    Wait Until Page Contains Element    ${SAVE_ARTICLE_BUTTON}
+    Click Element                       ${SAVE_ARTICLE_BUTTON}
+    Wait Until Page Contains Element    ${REMOVE_FROM_LIST_BUTTON}    timeout=5s

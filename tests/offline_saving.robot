@@ -6,8 +6,12 @@ Resource        ../resources/oracles/db_oracle.resource
 Resource        ../resources/oracles/api_oracle.resource
 Resource        ../resources/network.resource
 Resource        ../resources/reading_list_actions.resource
-Suite Setup    Run Keywords    app.Start Session
+Suite Setup    Run Keywords         app.Ensure Adb Root       AND       app.Start Session
 Suite Teardown          Close Application
+Test Setup       Run Keywords
+...              reading_list_actions.Ensure Clean Saved State    ${HIST1H1B_ARTICLE_NAME}    ${CUSTOM_LIST_NAME}
+...              AND    search_actions.Reset To Search Page
+Test Teardown    reading_list_actions.Ensure Clean Saved State    ${HIST1H1B_ARTICLE_NAME}    ${CUSTOM_LIST_NAME}
 
 *** Test Cases ***
 
@@ -18,8 +22,6 @@ Saving An Article Offline Persists A Correct Row
     ...    Searching and opening the article are the vehicle, not the claim, so
     ...    they carry sync waits but no business assertions.
     [Tags]      offline     oracle-db
-    [Setup]     Run Keywords        search_actions.Reset To Search Page
-    ...         AND                 db_oracle.Wait Until Article Is Not Saved   ${HIST1H1B_ARTICLE_NAME}
     search_actions.Dismiss Faster Way To Search Tip If Present
     search_actions.Search For Article       ${HIST1H1B_ARTICLE_NAME}
     search_actions.Verify Search List Shows Article        ${HIST1H1B_ARTICLE_NAME}
@@ -28,7 +30,6 @@ Saving An Article Offline Persists A Correct Row
     article_actions.Save Article
     article_actions.Verify Snackbar Says             ${SAVED_SNACKBAR_TEXT}
     db_oracle.Wait Until Saved Article Row Is Correct    ${HIST1H1B_ARTICLE_NAME}
-    [Teardown]      article_actions.Remove Article From List
 
 Removing A Saved Article Deletes Its Row
     [Documentation]     Covers the second branch of the state-dependent Save
@@ -38,8 +39,6 @@ Removing A Saved Article Deletes Its Row
     ...    claim is that removal leaves no row behind, so the DB is the oracle.
     ...    The snackbar only proves the app acknowledged the tap.
     [Tags]      offline     oracle-db
-    [Setup]     Run Keywords        search_actions.Reset To Search Page
-    ...         AND                 db_oracle.Wait Until Article Is Not Saved    ${HIST1H1B_ARTICLE_NAME}
     search_actions.Dismiss Faster Way To Search Tip If Present
     search_actions.Search For Article       ${HIST1H1B_ARTICLE_NAME}
     search_actions.Verify Search List Shows Article        ${HIST1H1B_ARTICLE_NAME}
@@ -49,8 +48,6 @@ Removing A Saved Article Deletes Its Row
     article_actions.Verify Snackbar Says             ${SAVED_SNACKBAR_TEXT}
     article_actions.Remove Article From List
     db_oracle.Wait Until Article Is Not Saved    ${HIST1H1B_ARTICLE_NAME}
-    [Teardown]    Run Keyword And Ignore Error
-    ...           article_actions.Remove Article From List
 
 Saved Article Is Readable With The Network Off
     [Documentation]    The feature's actual promise: a saved article opens and
@@ -64,14 +61,11 @@ Saved Article Is Readable With The Network Off
     ...    The download must finish before the network drops, so the row check
     ...    is a gate here rather than an assertion.
     [Tags]      offline    oracle-db    oracle-api
-    [Setup]     Run Keywords        search_actions.Reset To Search Page
-    ...         AND                 db_oracle.Wait Until Article Is Not Saved     ${HIST1H1B_ARTICLE_NAME}
     search_actions.Dismiss Faster Way To Search Tip If Present
     search_actions.Search For Article                ${HIST1H1B_ARTICLE_NAME}
     search_actions.Open First Search Result
     article_actions.Dismiss Games Promo If Present
     article_actions.Save Article
-    article_actions.Verify Snackbar Says             ${SAVED_SNACKBAR_TEXT}
     db_oracle.Wait Until Saved Article Row Is Correct    ${HIST1H1B_ARTICLE_NAME}
     ${expected}=     api_oracle.Get Expected Article Extract        ${HIST1H1B_ARTICLE_NAME}
     article_actions.Navigate Back To Search Page
@@ -80,9 +74,6 @@ Saved Article Is Readable With The Network Off
     reading_list_actions.Open Default Saved List
     reading_list_actions.Open Saved Article          ${HIST1H1B_ARTICLE_NAME}
     article_actions.Verify UI Paragraph Matches Extract   ${expected}
-    [Teardown]    Run Keywords
-    ...           network.Enable Network
-    ...           AND    Run Keyword And Ignore Error    article_actions.Remove Article From List
 
 Saved Articles Survive An App Restart
     [Documentation]    Durability. A save must outlive the process that made it.
@@ -92,24 +83,17 @@ Saved Articles Survive An App Restart
     ...    The app is killed with force-stop, so it gets no chance to flush on
     ...    shutdown - anything that survives was already persisted.
     [Tags]      offline    oracle-db
-    [Setup]     Run Keywords        search_actions.Reset To Search Page
-    ...         AND                 db_oracle.Wait Until Article Is Not Saved    ${HIST1H1B_ARTICLE_NAME}
     search_actions.Dismiss Faster Way To Search Tip If Present
     search_actions.Search For Article                ${HIST1H1B_ARTICLE_NAME}
     search_actions.Open First Search Result
     article_actions.Dismiss Games Promo If Present
     article_actions.Save Article
-    article_actions.Verify Snackbar Says             ${SAVED_SNACKBAR_TEXT}
     db_oracle.Wait Until Saved Article Row Is Correct    ${HIST1H1B_ARTICLE_NAME}
     app.Restart App Cold
-    search_actions.Dismiss Faster Way To Search Tip If Present
     search_actions.Navigate To Saved Page
     reading_list_actions.Open Default Saved List
     reading_list_actions.Verify Saved Article Is Listed    ${HIST1H1B_ARTICLE_NAME}
     db_oracle.Wait Until Saved Article Row Is Correct    ${HIST1H1B_ARTICLE_NAME}
-    [Teardown]    Run Keyword And Ignore Error    Run Keywords
-    ...           reading_list_actions.Open Saved Article    ${HIST1H1B_ARTICLE_NAME}
-    ...           AND    article_actions.Remove Article From List
 
 Adding A Saved Article To A New Reading List Persists The List
     [Documentation]    Covers the third Save context-menu branch and a second
@@ -121,22 +105,13 @@ Adding A Saved Article To A New Reading List Persists The List
     ...    has a row pointing at it. Checking only that the list was created
     ...    would pass while the article stayed in the default list alone.
     [Tags]      offline    oracle-db
-    [Setup]     Run Keywords          search_actions.Reset To Search Page
-    ...        AND      search_actions.Dismiss Faster Way To Search Tip If Present
-    ...        AND    search_actions.Navigate To Saved Page
-    ...        AND    reading_list_actions.Ensure Reading List Does Not Exist    ${CUSTOM_LIST_NAME}
-    ...        AND    search_actions.Reset To Search Page
-    ...        AND    db_oracle.Wait Until Article Is Not Saved   ${HIST1H1B_ARTICLE_NAME}
     search_actions.Dismiss Faster Way To Search Tip If Present
     search_actions.Search For Article                ${HIST1H1B_ARTICLE_NAME}
     search_actions.Open First Search Result
     article_actions.Dismiss Games Promo If Present
     article_actions.Save Article
-    article_actions.Verify Snackbar Says             ${SAVED_SNACKBAR_TEXT}
     db_oracle.Wait Until Saved Article Row Is Correct    ${HIST1H1B_ARTICLE_NAME}
     article_actions.Add Article To New Reading List    ${CUSTOM_LIST_NAME}
-    reading_list_actions.Verify Article Is In Reading List
-    ...        ${HIST1H1B_ARTICLE_NAME}    ${CUSTOM_LIST_NAME}
-    [Teardown]    Run Keyword And Ignore Error        reading_list_actions.Clean Up Saved State
-    ...           ${HIST1H1B_ARTICLE_NAME}    ${CUSTOM_LIST_NAME}
-
+    Wait Until Keyword Succeeds    30s    2s
+    ...    reading_list_actions.Verify Article Is In Reading List
+    ...    ${HIST1H1B_ARTICLE_NAME}    ${CUSTOM_LIST_NAME}

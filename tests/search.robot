@@ -8,6 +8,7 @@ Suite Setup    Run Keywords    app.Start Session
 Suite Teardown          Close Application
 
 *** Test Cases ***
+
 Search Returns The Requested Article
     [Documentation]     Search for an article by its exact name, open it from the results,
     ...                and check the article body matches what the API returns.
