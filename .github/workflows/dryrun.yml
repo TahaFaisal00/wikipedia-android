@@ -1,0 +1,47 @@
+name: Static validation
+
+# Resolves every keyword, variable and resource import across all suites without
+# executing anything — no emulator, no Appium, no device. Catches the class of
+# mistake that is otherwise invisible until runtime: a renamed keyword whose old
+# name is still called somewhere, a resource that stopped being imported, a
+# keyword invoked with the wrong number of arguments.
+#
+# The full suites run against a local emulator. Emulator CI on hosted runners is
+# slow and flaky, and a badge that goes red from infrastructure noise stops
+# carrying information.
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  dryrun:
+    name: Resolve keywords without executing
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Dry run all suites
+        run: robot --dryrun --outputdir log tests/
+
+      - name: Upload Robot Framework output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dryrun-log
+          path: log/
+          retention-days: 7
