@@ -16,7 +16,7 @@ Library             AppiumLibrary
 Article Survives Backgrounding And Returning
     [Documentation]    Control case for the process-death tests —
     ...                plain background/resume must not lose the article.
-    [Tags]      lifescycle     oracle-ui
+    [Tags]      lifescycle     oracle-ui        positive
     [Setup]     search_actions.Reset To Search Page
     search_actions.Dismiss Faster Way To Search Tip If Present
     search_actions.Search For Article       ${HIST1H1B_ARTICLE_NAME}
@@ -29,7 +29,7 @@ Article Survives Backgrounding And Returning
 Article Survives Process Death
     [Documentation]    Paired with the backgrounding control — same steps, real process death.
     ...    The article itself is restored; section and scroll state are not (see test 3).
-    [Tags]    lifecycle    oracle-ui
+    [Tags]    lifecycle    oracle-ui        positive
     [Setup]    search_actions.Reset To Search Page
     search_actions.Dismiss Faster Way To Search Tip If Present
     search_actions.Search For Article    ${HIST1H1B_ARTICLE_NAME}
@@ -42,7 +42,7 @@ Article Survives Process Death
 Expanded Section And Reading Position Are Lost After Recreation
     [Documentation]    Bug — a RED here means it was fixed.
     ...    One defect, two manifestations: the section collapses, and the anchor inside it takes the scroll position with it.
-    [Tags]    lifecycle    oracle-ui    bug
+    [Tags]    lifecycle    oracle-ui    bug     positive
     [Setup]    search_actions.Reset To Search Page
     search_actions.Dismiss Faster Way To Search Tip If Present
     search_actions.Search For Article    ${HIST1H1B_ARTICLE_NAME}
@@ -64,7 +64,7 @@ Expanded Section And Reading Position Are Lost After Recreation
 Search Results Are Refetched Instead Of Restored After Recreation
     [Documentation]    Bug — a RED here means it was fixed.
     ...    Results are re-queried on activity recreation instead of restored, so with the network down they vanish.
-    [Tags]    lifecycle    oracle-ui    bug
+    [Tags]    lifecycle    oracle-ui    bug     positive
     [Setup]    Run Keywords    device.Enable Do Not Keep Activities
     ...    AND                 search_actions.Reset To Search Page
     search_actions.Dismiss Faster Way To Search Tip If Present
@@ -80,7 +80,7 @@ Location Permission Does Not Take Effect Until The Places Screen Is Recreated
     [Documentation]    Bug — a RED here means it was fixed.
     ...    Granting while the screen is open leaves the app with no location request at all;
     ...    only re-entering the screen registers one.
-    [Tags]    lifecycle    oracle-device    bug
+    [Tags]    lifecycle    oracle-device    bug     positive
     [Setup]    Run Keywords    device.Revoke Location Permission
     ...    AND    search_actions.Reset To Search Page
     [Teardown]    device.Revoke Location Permission
@@ -97,7 +97,7 @@ Location Permission Does Not Take Effect Until The Places Screen Is Recreated
 
 Selected Bottom Nav Tab Survives Process Death
     [Documentation]    Regression guard — the selected tab is restored, unlike section and scroll state.
-    [Tags]    lifecycle    oracle-ui
+    [Tags]    lifecycle    oracle-ui        positive
     [Setup]    search_actions.Reset To Search Page
     search_actions.Navigate To Saved Page
     article_actions.Verify Bottom Nav Tab Is Selected    ${SAVED_BAR}
