@@ -5,9 +5,10 @@ Resource        ../resources/search_actions.resource
 Resource        ../resources/network.resource
 Resource        ../resources/device.resource
 Resource        ../resources/places_actions.resource
-Suite Setup    Run Keywords    app.Start Session
-...            AND    search_actions.Navigate To Search Page
-...            AND    search_actions.Dismiss Faster Way To Search Tip If Present
+Suite Setup    Run Keywords          app.Start Session
+#...            AND               device.Set App Language    en
+...            AND        search_actions.Navigate To Search Page
+...            AND        search_actions.Dismiss Faster Way To Search Tip If Present
 Suite Teardown          Close Application
 Library             AppiumLibrary
 

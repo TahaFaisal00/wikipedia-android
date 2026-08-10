@@ -68,7 +68,7 @@ Verify Search List Shows Article
     [Documentation]     Check the article title is in the search results on screen.
     [Arguments]             ${article_name}
     ${search_result_article_title}=       Format String    ${SEARCH_RESULT_ARTICLE_TITLE}         ${article_name}
-    Page Should Contain Element    ${search_result_article_title}
+    Wait Until Page Contains Element    ${search_result_article_title}    timeout=10s
 
 Verify Search List Shows No Article
     [Documentation]     Asserts the search screen shows the no-results message.

@@ -1,6 +1,7 @@
 *** Settings ***
 Library         AppiumLibrary
 Library    String
+Library    Process
 Resource        ../pages/device_settings_page.resource
 
 *** Keywords ***
@@ -71,3 +72,52 @@ Verify App Is Not Requesting Location
     ${output}=    Execute Script    mobile: shell    command=dumpsys    args=${{ ['location'] }}
     ${lines}=    Get Lines Containing String    ${output}    gps: org.wikipedia.alpha
     Should Not Contain    ${lines}    Currently active
+
+Verify App Process Is Gone
+    [Documentation]    Asserts the app process is really dead.
+    ...    am force-stop returns before the process has actually exited, and the app rewrites
+    ...    its shared preferences on the way out — editing the file before then loses the edit,
+    ...    or reads it back mid-write.
+    ${result}=    Run Process    adb    -s    ${DEVICE}    shell    pidof    org.wikipedia.alpha
+    ...    stderr=STDOUT
+    Should Be Empty    ${result.stdout.strip()}
+
+Write App Language
+    [Documentation]    One attempt at writing the language prefs and reading them back.
+    ...    The read-back is the point: sed reports success even when the edit does not land,
+    ...    so rc alone would let a suite run against the wrong language and pass for the
+    ...    wrong reason.
+    [Arguments]    ${code}
+    ${script}=    Set Variable
+    ...    s|"languageApp">[a-z]*<|"languageApp">${code}<|; s|"homeLanguageCode">[a-z]*<|"homeLanguageCode">${code}<|
+    ${result}=    Run Process    adb    -s    ${DEVICE}    shell    sed    -i    "${script}"
+    ...    /data/data/org.wikipedia.alpha/shared_prefs/org.wikipedia.alpha_preferences.xml
+    ...    stderr=STDOUT
+    Should Be Equal As Integers    ${result.rc}    0    msg=${result.stdout}
+    ${check}=    Run Process    adb    -s    ${DEVICE}    shell    grep    -o
+    ...    "homeLanguageCode..[a-z]*"
+    ...    /data/data/org.wikipedia.alpha/shared_prefs/org.wikipedia.alpha_preferences.xml
+    ...    stderr=STDOUT
+    Should End With    ${check.stdout.strip()}    ${code}
+
+Set App Language
+    [Documentation]    Forces the app's own content language. This is separate state from the
+    ...    device locale and survives both a new session and a locale change — the app writes
+    ...    these prefs to match the device locale on launch and never reverts them, so a suite
+    ...    that ran in Arabic leaves every later suite searching ar.wikipedia.
+    ...    Run Process rather than mobile: shell, for two reasons. mobile: shell does not quote
+    ...    its arguments for the device shell, so the angle brackets are read as redirection and
+    ...    /system/bin/sh dies before sed runs. And Run Process needs no Appium session, so this
+    ...    can run before one exists.
+    ...    The sed script is passed as one argument with literal double quotes: those reach the
+    ...    device shell and stop it parsing the pipes and brackets itself.
+    ...    The app is force-stopped first — it holds shared preferences in memory and would
+    ...    overwrite the file on exit — and the process death is then waited for, because
+    ...    force-stop is asynchronous and an edit that lands too early is silently lost.
+    ...    The write is retried: the edit intermittently fails to land on the first attempt
+    ...    after a cold boot, and the read-back catches that rather than letting it through.
+    [Arguments]    ${code}
+    Run Process    adb    -s    ${DEVICE}    shell    am    force-stop    org.wikipedia.alpha
+    ...    stderr=STDOUT
+    Wait Until Keyword Succeeds    10s    1s    Verify App Process Is Gone
+    Wait Until Keyword Succeeds    3x    2s    Write App Language    ${code}

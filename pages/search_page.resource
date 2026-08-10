@@ -26,3 +26,4 @@ ${ARABIC_BAGHDAD_ARTICLE_NAME}          بغداد
 ${ARABIC_BAGHDAD_ARTICLE_TITLE}          android=new UiSelector().text("بغداد")
 
 ${SAVED_BAR}    android=new UiSelector().resourceId("org.wikipedia.alpha:id/nav_tab_reading_lists")
+${SEARCH_BAR}    android=new UiSelector().resourceId("org.wikipedia.alpha:id/nav_tab_search")
