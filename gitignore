@@ -1,0 +1,40 @@
+# Robot Framework output
+log/
+output.xml
+log.html
+report.html
+
+# Allure — results and the multi-file report are regenerated, only docs/ is committed
+allure-results/
+allure-report/
+
+# Device pulls. These carry app-private data: the SQLite database, shared
+# preferences, and UI dumps can contain install identifiers, session ids and
+# location data. Never commit them.
+.tmp/
+*.db
+*.db-wal
+*.db-shm
+*.xml
+!.idea/**/*.xml
+
+# Screen captures pulled from the device
+*.mp4
+screenshots/
+
+# APKs
+*.apk
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# PyCharm
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
