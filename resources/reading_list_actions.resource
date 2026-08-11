@@ -114,7 +114,7 @@ Delete Reading List
     ...    The confirmation step is conditional - it does not appear on every list,
     ...    and a mandatory wait for it fails the delete that already succeeded.
     [Arguments]    ${list_name}
-    ${locator}=    Set Variable    android=new UiSelector().text("${list_name}")
+    ${locator}=    Format String    ${CUSTOM_LIST_ITEM}    ${list_name}
     Wait Until Page Contains Element    ${locator}
     Long Press Element                  ${locator}
     Wait Until Page Contains Element    ${DELETE_LIST_MENU_ITEM}
@@ -123,18 +123,6 @@ Delete Reading List
     ...    Wait Until Page Contains Element    ${CONFIRM_DIALOG_OK}    timeout=15s
     IF    ${confirm}
         Click Element    ${CONFIRM_DIALOG_OK}
-    END
-
-Ensure Reading List Does Not Exist
-    [Documentation]    Setup helper. Deletes a named list if a previous run left
-    ...    one behind.
-    ...    Setup makes the starting state true rather than only checking it,
-    ...    otherwise one failed run blocks every run after it.
-    ...    Must run from the Saved screen.
-    [Arguments]    ${list_name}
-    ${rows}=    db_oracle.Get Reading List Rows    ${list_name}
-    IF    len($rows) > 0
-        Delete Reading List    ${list_name}
     END
 
 Go To Saved Screen

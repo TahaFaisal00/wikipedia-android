@@ -8,7 +8,6 @@ Resource        ../resources/network.resource
 Resource        ../resources/reading_list_actions.resource
 Resource        ../resources/device.resource
 Suite Setup    Run Keywords      app.Start Session      AND      app.Ensure Adb Root
-#...            AND            device.Set App Language    en
 Suite Teardown          Close Application
 Test Setup       Run Keywords
 ...              reading_list_actions.Ensure Clean Saved State    ${HIST1H1B_ARTICLE_NAME}    ${CUSTOM_LIST_NAME}

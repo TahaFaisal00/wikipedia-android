@@ -5,7 +5,6 @@ Resource        ../resources/search_actions.resource
 Resource        ../resources/feed_actions.resource
 Resource        ../resources/device.resource
 Suite Setup            Run Keywords         app.Start Session     ar  EG  ${WIKI_AR}
-#...            AND           device.Set App Language    ar
 ...            AND       app.Verify Device Locale Is Arabic
 ...            AND      search_actions.Navigate To Search Page
 ...            AND       search_actions.Dismiss Faster Way To Search Tip If Present

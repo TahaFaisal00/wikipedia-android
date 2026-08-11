@@ -126,12 +126,17 @@ context menu or card overflow menu is open, the tree root is that popup alone.
 Elements plainly visible on screen report as "not found". Several days of
 apparent flakiness traced back to this single fact.
 
-**No positional locators.** `instance(2)` on a context menu breaks the moment the
-menu has a different number of items — and the Save menu genuinely has two shapes,
-with two different removal labels, depending on how the article was reached.
+**Positional locators only where the app gives no alternative.** `instance(2)` on
+a context menu breaks the moment the menu has a different number of items — and
+the Save menu genuinely has two shapes, with two different removal labels,
+depending on how the article was reached.
 `className("android.widget.Button").instance(0)` matched a feed card's overflow
-button and silently opened the wrong menu. Every locator is keyed on a resource
-id or on text.
+button and silently opened the wrong menu. Locators are keyed on a resource id or
+on text wherever the app exposes one. Four positional locators remain where it
+does not: the first-run tutorial, the search tip, the Compose result list, and
+the default reading list. Each is scoped to a screen where nothing else can
+match — and the Compose list is a testability finding in its own right, recorded
+in BUGS.md.
 
 **Retry the pair; never guess a timeout.** An onboarding dialog that fires on a
 launch cadence cannot be waited out with a fixed number. Dismissal and the launch
