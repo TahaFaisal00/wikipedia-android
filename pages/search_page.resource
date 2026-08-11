@@ -1,5 +1,4 @@
 *** Variables ***
-${SEARCH_BAR}     android=new UiSelector().resourceId("org.wikipedia.alpha:id/navigation_bar_item_content_container").instance(2)
 ${FASTER_WAY_TO_SEARCH_WINDOW_CLOSE_BUTTON}         android=new UiSelector().className("android.widget.Button").instance(0)
 
 ${SEARCH_PLACEHOLDER}         id=org.wikipedia.alpha:id/search_text_view
@@ -26,4 +25,4 @@ ${ARABIC_BAGHDAD_ARTICLE_NAME}          بغداد
 ${ARABIC_BAGHDAD_ARTICLE_TITLE}          android=new UiSelector().text("بغداد")
 
 ${SAVED_BAR}    android=new UiSelector().resourceId("org.wikipedia.alpha:id/nav_tab_reading_lists")
-${SEARCH_BAR}    android=new UiSelector().resourceId("org.wikipedia.alpha:id/nav_tab_search")
+${SEARCH_BAR}     android=new UiSelector().resourceId("org.wikipedia.alpha:id/nav_tab_search")

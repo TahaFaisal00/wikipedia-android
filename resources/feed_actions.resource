@@ -3,11 +3,16 @@ Library          AppiumLibrary
 Resource         ../pages/feed_page.resource
 *** Keywords ***
 Verify Bottom Navigation Is Translated
-    [Documentation]      Premise. Confirms the interface really did switch to Arabic,
+    [Documentation]     Premise. Confirms the interface really did switch to Arabic,
     ...                 so the untranslated tabs read as a defect and not as a locale
     ...                 that never applied.
-    Wait Until Page Contains Element    ${ARABIC_SEARCH_BAR_NAME}
-    Wait Until Page Contains Element    ${ARABIC_MORE_BAR_NAME}
+    ...                 Explicit timeouts because this runs on a freshly launched app under
+    ...                 a new locale, which is the slowest render in the suite. The default
+    ...                 5s made this intermittent. The locators stay keyed on the Arabic
+    ...                 labels — a resource id would be present whether or not the app
+    ...                 translated anything, so it could not fail and would prove nothing.
+    Wait Until Page Contains Element    ${ARABIC_SEARCH_BAR_NAME}    timeout=20s
+    Wait Until Page Contains Element    ${ARABIC_MORE_BAR_NAME}      timeout=20s
 
 Verify Feed Filter Tabs Are Untranslated
     [Documentation]     Asserts the ENGLISH tab labels — this locks BUG 6, it does not

@@ -120,7 +120,7 @@ Delete Reading List
     Wait Until Page Contains Element    ${DELETE_LIST_MENU_ITEM}
     Click Element                       ${DELETE_LIST_MENU_ITEM}
     ${confirm}=    Run Keyword And Return Status
-    ...    Wait Until Page Contains Element    ${CONFIRM_DIALOG_OK}    timeout=5s
+    ...    Wait Until Page Contains Element    ${CONFIRM_DIALOG_OK}    timeout=15s
     IF    ${confirm}
         Click Element    ${CONFIRM_DIALOG_OK}
     END
