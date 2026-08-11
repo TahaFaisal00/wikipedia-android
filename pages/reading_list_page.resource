@@ -5,8 +5,7 @@ ${DEFAULT_SAVE_LIST}                android=new UiSelector().resourceId("org.wik
 
 ${SHARE_WITH_OTHER_GOT_IT_BUTTON}       id=org.wikipedia.alpha:id/buttonView
 
-${THE_ONLY_SAVED_ARTICLE_IN_DEFAULT_LIST}           id=org.wikipedia.alpha:id/page_list_item_title
-
+${SAVED_ARTICLE_IN_LIST}    android=new UiSelector().resourceId("org.wikipedia.alpha:id/page_list_item_title").text("{}")
 ${CUSTOM_LIST_NAME}                     QA Test List
 
 ${CUSTOM_LIST_ITEM}          android=new UiSelector().text("{}")

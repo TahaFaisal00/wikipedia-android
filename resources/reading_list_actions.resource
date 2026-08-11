@@ -48,13 +48,14 @@ Dismiss Share With Others Tip If Present
 
 Open Saved Article
     [Documentation]    Opens an article from inside a reading list, by title.
-    ...    Matches on the title rather than list position, so it keeps working
-    ...    once a list holds more than one article.
-    ...    Retries the tip-dismissal and the row wait as a pair: the share balloon
-    ...    opens in its own window and hides the list from the tree entirely, and
-    ...    it can arrive after the dismissal step has already run.
+    ...    Scoped to the row-title id and the article title together, so it keeps working
+    ...    once a list holds more than one article. The row description carries a different
+    ...    id, so the two cannot collide.
+    ...    Retries the tip-dismissal and the row wait as a pair: the share balloon opens in
+    ...    its own window and hides the list from the tree entirely, and it can arrive after
+    ...    the dismissal step has already run.
     [Arguments]    ${title}
-    ${locator}=    Format String    ${THE_ONLY_SAVED_ARTICLE_IN_DEFAULT_LIST}    ${title}
+    ${locator}=    Format String    ${SAVED_ARTICLE_IN_LIST}    ${title}
     Wait Until Keyword Succeeds    20s    2s    Wait For Saved Article Row    ${locator}
     Click Element    ${locator}
 
@@ -64,17 +65,14 @@ Wait For Saved Article Row
     Dismiss Share With Others Tip If Present
     Wait Until Page Contains Element    ${locator}    timeout=5s
 
-
 Verify Saved Article Is Listed
     [Documentation]    Asserts the article appears in the open reading list.
-    ...    Matches the row by id and checks the title as text. A text-based
-    ...    selector is not usable here - the title does not appear in the tree
-    ...    until the list holds more than one article.
-    ...    Because the id is not unique once a second article is added, this
-    ...    keyword is only valid for a single-article list.
+    ...    Matches the row-title id and the article title in one locator, so the assertion
+    ...    is about this article rather than about some row existing. Valid for a list of
+    ...    any size.
     [Arguments]    ${title}
-    Wait Until Page Contains Element    ${THE_ONLY_SAVED_ARTICLE_IN_DEFAULT_LIST}
-    Element Should Contain Text         ${THE_ONLY_SAVED_ARTICLE_IN_DEFAULT_LIST}    ${title}
+    ${locator}=    Format String    ${SAVED_ARTICLE_IN_LIST}    ${title}
+    Wait Until Page Contains Element    ${locator}
 
 Long Press Element
     [Documentation]    Long-presses an element. AppiumLibrary only ships a
@@ -148,30 +146,48 @@ Reach Saved Screen
 
 Remove Reading List If Present
     [Documentation]    Deletes the named list when the database says one exists.
-    ...    Returns whether it actually did anything, so the caller knows whether
-    ...    a verification wait is worth paying for.
+    ...    The database is the gate, not the screen - it answers from any state,
+    ...    including one the UI cannot be read in. Deleting the list drops its
+    ...    ReadingListPage rows with it.
     [Arguments]    ${list_name}
     ${rows}=    db_oracle.Get Reading List Rows    ${list_name}
     IF    len($rows) == 0
         RETURN    ${FALSE}
     END
-    Go To Saved Screen
-    Delete Reading List    ${list_name}
+    Wait Until Keyword Succeeds    3x    2s    Delete Reading List And Verify    ${list_name}
     RETURN    ${TRUE}
 
+Delete Reading List And Verify
+    [Documentation]    One attempt at deleting the list, checked against the database.
+    ...    Deleting through the UI can silently do nothing - a long press that does not
+    ...    register, a confirmation that never renders - and none of that raises. Without
+    ...    a check the caller reports success and the teardown leaves the list behind.
+    [Arguments]    ${list_name}
+    Go To Saved Screen
+    Delete Reading List    ${list_name}
+    db_oracle.Wait Until Reading List Does Not Exist    ${list_name}
+
 Remove Saved Article If Present
-    [Documentation]    Un-saves the article from the default list when a row
-    ...    remains. Returns whether it acted, same contract as the list keyword.
+    [Documentation]    Un-saves the article from the default list when a row remains.
+    ...    Runs after the custom-list step, so the article is down to one list by now and
+    ...    the Save menu takes its simple "remove from saved" branch.
     [Arguments]    ${api_title}
     ${rows}=    db_oracle.Get Saved Article Rows    ${api_title}
     IF    len($rows) == 0
         RETURN    ${FALSE}
     END
+    Wait Until Keyword Succeeds    3x    2s    Remove Saved Article And Verify    ${api_title}
+    RETURN    ${TRUE}
+
+Remove Saved Article And Verify
+    [Documentation]    One attempt at un-saving the article, checked against the database.
+    ...    Same reasoning as the list removal: the UI path can fail without raising.
+    [Arguments]    ${api_title}
     Go To Saved Screen
     Open Default Saved List
     Open Saved Article    ${api_title}
     article_actions.Remove Article From List
-    RETURN    ${TRUE}
+    db_oracle.Wait Until Article Is Not Saved    ${api_title}
 
 Ensure Clean Saved State
     [Documentation]    Setup and teardown for the whole suite. Leaves no custom
